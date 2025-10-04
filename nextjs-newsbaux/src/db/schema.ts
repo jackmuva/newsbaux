@@ -24,6 +24,7 @@ export const dataSourcesTable = sqliteTable('datasources', {
 	id: text('id').primaryKey().$defaultFn(() => v4()),
 	url: text('url').notNull(),
 	name: text('name').notNull(),
+	standard: integer('standard', { mode: "boolean" }).$defaultFn(() => false),
 });
 
 export type DataSource = typeof dataSourcesTable.$inferSelect;
@@ -38,3 +39,36 @@ export const newsSectionTable = sqliteTable('newsSection', {
 });
 
 export type NewsSection = typeof newsSectionTable.$inferSelect;
+
+export const articlesTable = sqliteTable('articles', {
+	id: text('id').primaryKey().$defaultFn(() => v4()),
+	dataSourceId: text('dataSourceId').notNull().references(() => dataSourcesTable.id, { onDelete: 'cascade' }),
+	contents: text('contents').notNull(),
+	url: text('url').notNull(),
+	retrievalDate: text('retrievalDate').$defaultFn(() => (new Date()).toUTCString())
+		.$onUpdate(() => (new Date()).toUTCString()),
+	summary: text('summary'),
+});
+
+export type Article = typeof articlesTable.$inferSelect;
+
+export const editionsTable = sqliteTable('editions', {
+	id: text('id').primaryKey().$defaultFn(() => v4()),
+	newsletterId: text('newsletterId').notNull().references(() => newslettersTable.id, { onDelete: "cascade" }),
+	contents: text('contents'),
+	publishDate: text('publishDate').$defaultFn(() => (new Date()).toUTCString())
+		.$onUpdate(() => (new Date()).toUTCString()),
+});
+
+export type Edition = typeof editionsTable.$inferSelect;
+
+export const editionSectionTable = sqliteTable('editionsSection', {
+	id: text('id').primaryKey().$defaultFn(() => v4()),
+	editionId: text('editionId').notNull().references(() => editionsTable.id, { onDelete: "cascade" }),
+	newsSectionId: text('newsSectionid').notNull().references(() => newsSectionTable.id, { onDelete: 'cascade' }),
+	contents: text('contents'),
+	publishDate: text('publishDate').$defaultFn(() => (new Date()).toUTCString())
+		.$onUpdate(() => (new Date()).toUTCString()),
+});
+
+export type EditionSection = typeof editionSectionTable.$inferSelect;
