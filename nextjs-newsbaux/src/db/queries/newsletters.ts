@@ -1,0 +1,43 @@
+import { eq } from 'drizzle-orm';
+import { db } from '../connection';
+import { Newsletter, newslettersTable } from '../schema';
+
+export const getNewslettersByUserId = async (userId: string): Promise<Newsletter[] | null> => {
+	try {
+		return await db.select().from(newslettersTable).where(eq(newslettersTable.userId, userId))
+	} catch (e) {
+		console.error("Unable to get newsletters: ", e);
+	}
+	return null;
+}
+
+export const createNewsletter = async (userId: string, cadence: number): Promise<Newsletter | null> => {
+	try {
+		return (await db.insert(newslettersTable).values({
+			userId: userId,
+			cadence: cadence,
+		}).returning())[0];
+	} catch (e) {
+		console.error("Unable to upsert newsletter: ", e);
+	}
+	return null;
+}
+
+export const updateNewsletter = async (id: string, cadence: number): Promise<Newsletter | null> => {
+	try {
+		return (await db.update(newslettersTable).set({
+			cadence: cadence,
+		}).where(eq(newslettersTable.id, id)).returning())[0];
+	} catch (e) {
+		console.error("Unable to update newsletter: ", e);
+	}
+	return null;
+}
+
+export const deleteNewsletter = async (id: string): Promise<void> => {
+	try {
+		await db.delete(newslettersTable).where(eq(newslettersTable.id, id));
+	} catch (e) {
+		console.error("Unable to delete newsletter: ", e);
+	}
+}

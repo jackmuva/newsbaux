@@ -15,7 +15,7 @@ then
     tmux new-window -t $SESSION:1 -n 'next-server'
     tmux send-keys -t 'next-server' 'cd nextjs-newsbaux' C-m 'npm run dev' C-m
 
-    tmux new-window -t $SESSION:3 -n 'opencode'
+    tmux new-window -t $SESSION:2 -n 'opencode'
     tmux send-keys -t 'opencode' 'opencode' C-m
 fi
 
