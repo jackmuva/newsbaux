@@ -20,10 +20,21 @@ export const newslettersTable = sqliteTable('newsletters', {
 
 export type Newsletter = typeof newslettersTable.$inferSelect;
 
-export const newsSectionTable = sqliteTable('', {
+export const dataSourcesTable = sqliteTable('datasources', {
+	id: text('id').primaryKey().$defaultFn(() => v4()),
+	url: text('url').notNull(),
+	name: text('name').notNull(),
+});
+
+export type DataSource = typeof dataSourcesTable.$inferSelect;
+
+export const newsSectionTable = sqliteTable('newsSection', {
 	id: text('id').primaryKey().$defaultFn(() => v4()),
 	userId: text('userId').notNull().references(() => usersTable.id, { onDelete: 'cascade' }),
 	newsId: text('newsId').notNull().references(() => newslettersTable.id, { onDelete: 'cascade' }),
+	title: text('title').notNull(),
+	systemPrompt: text('systemPrompt'),
+	dataSources: text("dataSources").$type<DataSource[]>(),
 });
 
 export type NewsSection = typeof newsSectionTable.$inferSelect;
