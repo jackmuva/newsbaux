@@ -8,7 +8,7 @@ export default async function NewsletterPage() {
 	console.log(session);
 
 	return (
-		<div className="w-dvw h-dvh flex flex-col pt-20 items-center">
+		<div className="w-dvw min-h-dvh h-fit border flex flex-col py-20 items-center gap-10">
 			<NewsletterEditor />
 			<form action={async () => {
 				"use server";

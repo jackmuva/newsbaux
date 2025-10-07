@@ -1,5 +1,6 @@
 import { Section, useEditorStore } from "@/store/editor-store";
 import { useEffect, useRef } from "react";
+import { DataSourceSelector } from "./data-source-selector";
 
 export const SectionEditor = ({
 	section
@@ -53,16 +54,19 @@ export const SectionEditor = ({
 	}, []);
 
 	return (
-		<div className="w-[900px] flex flex-col items-center p-2 gap-4 border-b-2 border-secondary/50 pb-10 mb-10">
-			<textarea ref={titleRef} placeholder="Section Title (i.e. Tech News)"
-				rows={1}
-				className="w-full p-0 text-5xl outline-none resize-none">
-			</textarea>
-			<textarea ref={descRef} rows={7}
-				placeholder={`what do you want to see from this section?
+		<div className="w-[950px] flex flex-col items-center p-2 gap-4 border-b-2 border-secondary/50 mb-2 py-8">
+			<div className={"px-8"}>
+				<textarea ref={titleRef} placeholder="Section Title (i.e. Tech News)"
+					rows={1}
+					className="w-full text-5xl outline-none resize-none">
+				</textarea>
+				<textarea ref={descRef} rows={4}
+					placeholder={`what do you want to see from this section?
 (i.e. News relevant for a senior level backend engineer. Interested in system design and local-first web apps.)`}
-				className="p-0 w-full text-lg outline-none resize-none text-wrap">
-			</textarea>
+					className="w-full text-lg outline-none resize-none text-wrap">
+				</textarea>
+				<DataSourceSelector />
+			</div>
 		</div>
 	);
 }
