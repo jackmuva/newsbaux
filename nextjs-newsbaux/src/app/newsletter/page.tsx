@@ -5,7 +5,6 @@ import { Session } from "next-auth";
 
 export default async function NewsletterPage() {
 	const session: Session | null = await auth();
-	console.log(session);
 
 	return (
 		<div className="w-dvw min-h-dvh h-fit border flex flex-col py-20 items-center gap-10">
