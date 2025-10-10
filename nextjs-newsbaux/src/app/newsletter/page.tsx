@@ -1,15 +1,33 @@
 import { auth, signIn } from "@/auth";
 import { NewsletterEditor } from "@/components/custom/editor/newsletter-editor";
 import { Button } from "@/components/ui/button";
+import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Session } from "next-auth";
+import { headers } from "next/headers";
+import { getQueryClient } from "../get-query-client";
 
 export default async function NewsletterPage() {
 	const session: Session | null = await auth();
-	console.log(session);
+	const url = (await headers()).get('x-url') || "";
+	const origin = url.split("/", 3).join("/");
+
+	const queryClient = getQueryClient();
+	queryClient.prefetchQuery({
+		queryKey: ['dataSources'],
+		queryFn: async () => {
+			const req = await fetch(`${origin}/api/data-sources`, {
+				method: "GET"
+			});
+			return await req.json();
+		},
+	});
+	console.log(queryClient);
 
 	return (
 		<div className="w-dvw min-h-dvh h-fit border flex flex-col py-20 items-center gap-10">
-			<NewsletterEditor />
+			<HydrationBoundary state={dehydrate(queryClient)}>
+				<NewsletterEditor />
+			</HydrationBoundary>
 			<form action={async () => {
 				"use server";
 				await signIn("github");
