@@ -1,10 +1,10 @@
 "use client";
 import { Section, useEditorStore } from "@/store/editor-store"
 import { SectionEditor } from "./section-editor";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { PenLineIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export const NewsletterEditor = () => {
 	const {
@@ -20,6 +20,17 @@ export const NewsletterEditor = () => {
 			addSection();
 		}
 	}, [sections]);
+
+	const { data: dataSources } = useSuspenseQuery({
+		queryKey: ['dataSources'],
+		queryFn: async () => {
+			const req = await fetch(`${origin}/api/data-sources`, {
+				method: "GET"
+			});
+			return await req.json();
+		},
+	});
+	console.log(dataSources);
 
 	return (
 		<div className="flex flex-col items-center relative">
