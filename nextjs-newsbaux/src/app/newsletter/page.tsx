@@ -28,7 +28,9 @@ export default async function NewsletterPage() {
 				"use server";
 				await signIn("github");
 			}}>
-				<Button className="font-bold text-lg italic" type="submit">Create Newsletter</Button>
+				<Button className="font-bold text-lg italic" type="submit">
+					Create Newsletter
+				</Button>
 			</form>
 
 		</div>
