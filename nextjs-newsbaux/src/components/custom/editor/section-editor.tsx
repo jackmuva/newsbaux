@@ -1,11 +1,14 @@
 import { Section, useEditorStore } from "@/store/editor-store";
 import { useEffect, useRef } from "react";
 import { DataSourceSelector } from "./data-source-selector";
+import { DataSource } from "@/db/schema";
 
 export const SectionEditor = ({
-	section
+	section,
+	dataSources,
 }: {
-	section: Section
+	section: Section,
+	dataSources: DataSource[],
 }) => {
 	const titleRef = useRef<HTMLTextAreaElement>(null);
 	const descRef = useRef<HTMLTextAreaElement>(null);
@@ -65,7 +68,7 @@ export const SectionEditor = ({
 (i.e. News relevant for a senior level backend engineer. Interested in system design and local-first web apps.)`}
 					className="w-full text-lg outline-none resize-none text-wrap">
 				</textarea>
-				<DataSourceSelector />
+				<DataSourceSelector dataSources={dataSources} />
 			</div>
 		</div>
 	);

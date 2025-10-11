@@ -5,6 +5,8 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Session } from "next-auth";
 import { headers } from "next/headers";
 import { getQueryClient } from "../get-query-client";
+import { getDataSources } from "@/lib/client-query";
+
 
 export default async function NewsletterPage() {
 	const session: Session | null = await auth();
@@ -14,14 +16,8 @@ export default async function NewsletterPage() {
 	const queryClient = getQueryClient();
 	queryClient.prefetchQuery({
 		queryKey: ['dataSources'],
-		queryFn: async () => {
-			const req = await fetch(`${origin}/api/data-sources`, {
-				method: "GET"
-			});
-			return await req.json();
-		},
+		queryFn: async () => await getDataSources(origin)
 	});
-	console.log(queryClient);
 
 	return (
 		<div className="w-dvw min-h-dvh h-fit border flex flex-col py-20 items-center gap-10">
