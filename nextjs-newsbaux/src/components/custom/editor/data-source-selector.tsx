@@ -40,7 +40,7 @@ export const DataSourceSelector = ({
 
 	const validateInputs = (urlString: string, dsName: string): boolean => {
 		try {
-			let url: URL = new URL(urlString);
+			const url: URL = new URL(urlString);
 			if (url.protocol !== "http:" && url.protocol !== "https:") {
 				toast("not a valid url");
 				return false;
