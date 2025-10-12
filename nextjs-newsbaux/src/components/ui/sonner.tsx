@@ -17,6 +17,14 @@ const Toaster = ({ ...props }: ToasterProps) => {
 					"--normal-border": "var(--border)",
 				} as React.CSSProperties
 			}
+			toastOptions={{
+				unstyled: true,
+				classNames: {
+					toast: `bg-input/30 p-2 text-center rounded-none
+						border-2 border-b-6 border-input/50`,
+				},
+			}}
+
 			{...props}
 		/>
 	)
