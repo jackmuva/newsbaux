@@ -68,7 +68,7 @@ export const SectionEditor = ({
 (i.e. News relevant for a senior level backend engineer. Interested in system design and local-first web apps.)`}
 					className="w-full text-lg outline-none resize-none text-wrap">
 				</textarea>
-				<DataSourceSelector dataSources={dataSources} />
+				<DataSourceSelector section={section} dataSources={dataSources} />
 			</div>
 		</div>
 	);

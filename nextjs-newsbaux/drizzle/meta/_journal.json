@@ -22,6 +22,20 @@
       "when": 1759601011383,
       "tag": "0002_yielding_prowler",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1760291655190,
+      "tag": "0003_flaky_surge",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1760294280268,
+      "tag": "0004_high_post",
+      "breakpoints": true
     }
   ]
 }

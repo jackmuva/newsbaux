@@ -22,9 +22,9 @@ export const createUser = async (name: string, email: string, avatar: string): P
 	return [];
 }
 
-export const deleteUser = async (id: string): Promise<void> => {
+export const deleteUser = async (email: string): Promise<void> => {
 	try {
-		await db.delete(usersTable).where(eq(usersTable.id, id));
+		await db.delete(usersTable).where(eq(usersTable.email, email));
 	} catch (e) {
 		console.error("Unable to delete user: ", e);
 	}

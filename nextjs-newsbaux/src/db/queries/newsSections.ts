@@ -11,10 +11,10 @@ export const getNewsSectionsByNewsletterId = async (id: string): Promise<NewsSec
 	return [];
 }
 
-export const createNewsSection = async (userId: string, newsId: string, title: string, systemPrompt: string | null, dataSources: DataSource[] | null): Promise<NewsSection | null> => {
+export const createNewsSection = async (email: string, newsId: string, title: string, systemPrompt: string | null, dataSources: DataSource[] | null): Promise<NewsSection | null> => {
 	try {
 		return (await db.insert(newsSectionTable).values({
-			userId, newsId, title, systemPrompt, dataSources
+			email, newsId, title, systemPrompt, dataSources
 		}).returning())[0]
 	} catch (e) {
 		console.error("Unable to create section: ", e);

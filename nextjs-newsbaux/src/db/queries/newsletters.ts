@@ -2,19 +2,19 @@ import { eq } from 'drizzle-orm';
 import { db } from '../connection';
 import { Newsletter, newslettersTable } from '../schema';
 
-export const getNewslettersByUserId = async (userId: string): Promise<Newsletter[] | null> => {
+export const getNewslettersByUserId = async (email: string): Promise<Newsletter[] | null> => {
 	try {
-		return await db.select().from(newslettersTable).where(eq(newslettersTable.userId, userId))
+		return await db.select().from(newslettersTable).where(eq(newslettersTable.email, email))
 	} catch (e) {
 		console.error("Unable to get newsletters: ", e);
 	}
 	return null;
 }
 
-export const createNewsletter = async (userId: string, cadence: number): Promise<Newsletter | null> => {
+export const createNewsletter = async (email: string, cadence: number): Promise<Newsletter | null> => {
 	try {
 		return (await db.insert(newslettersTable).values({
-			userId: userId,
+			email: email,
 			cadence: cadence,
 		}).returning())[0];
 	} catch (e) {

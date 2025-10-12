@@ -1,0 +1,1 @@
+ALTER TABLE `datasources` ADD `userId` text REFERENCES users(id);

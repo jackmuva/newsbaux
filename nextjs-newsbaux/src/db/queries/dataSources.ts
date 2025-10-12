@@ -11,10 +11,18 @@ export const getStandardDataSources = async (): Promise<DataSource[]> => {
 	return [];
 }
 
-export const createDataSource = async (url: string, name: string, standard: boolean): Promise<DataSource | null> => {
+export const getDataSourcesByUser = async (email: string): Promise<DataSource[]> => {
+	try {
+		return await db.select().from(dataSourcesTable).where(eq(dataSourcesTable.email, email));
+	} catch (e) {
+		console.error("unable to get standard data sources: ", e);
+	}
+	return [];
+}
+export const createDataSource = async (url: string, email: string, name: string, standard: boolean): Promise<DataSource | null> => {
 	try {
 		return (await db.insert(dataSourcesTable).values({
-			url, name, standard
+			url, email, name, standard
 		}).returning())[0]
 	} catch (e) {
 		console.error("Unable to create data source: ", e);
