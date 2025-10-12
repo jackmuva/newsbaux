@@ -1,11 +1,15 @@
+import { getQueryClient } from "@/app/get-query-client";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { DataSource } from "@/db/schema";
+import { addNewDataSource } from "@/lib/client-query";
 import { Section, useEditorStore } from "@/store/editor-store";
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { useMutation } from "@tanstack/react-query";
 import { CirclePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import Image from "next/image";
 
 export const DataSourceSelector = ({
 	dataSources,
@@ -34,27 +38,40 @@ export const DataSourceSelector = ({
 		} as Section)
 	}
 
-	const addNewDataSource = async () => {
-		const req = await fetch(`${window.location.origin}/api/data-sources`, {
-			method: "POST",
-			body: JSON.stringify({
-				url: url,
-				name: dsName,
-				standard: false,
-			}),
-		});
-		const res = await req.json();
-		if (res.ok) {
-
-		} else {
-			console.log('hi');
-			toast('unable to add source');
+	const validateInputs = (urlString: string, dsName: string): boolean => {
+		try {
+			let url: URL = new URL(urlString);
+			if (url.protocol !== "http:" && url.protocol !== "https:") {
+				toast("not a valid url");
+				return false;
+			}
+			if (!dsName) {
+				toast("source requires a name");
+				return false;
+			}
+		} catch (e) {
+			toast("not a valid url");
+			return false;
 		}
+		return true;
 	}
+
+	const queryClient = getQueryClient();
+	const mutation = useMutation({
+		mutationFn: async () => {
+			if (validateInputs(url, dsName)) await addNewDataSource(window.location.origin, url, dsName);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['userSources'] })
+		},
+		onError: () => {
+			toast('unable to add source');
+		},
+	});
 
 	return (
 		<div className="w-full h-60 bg-input/10 
-			grid grid-cols-7 gap-4 p-2 ">
+			grid grid-cols-7 gap-4 p-2 overflow-y-auto">
 			{dataSources.map((ds: DataSource) => {
 				return (
 					<div key={ds.id} className={`h-fit flex flex-col 
@@ -70,12 +87,14 @@ export const DataSourceSelector = ({
 								addDataSource(ds)
 							}
 						}}>
-						<img className="h-16 w-16 rounded-sm"
+						<Image className="rounded-sm mb-1"
+							width={60}
+							height={60}
 							alt={ds.name} src={
 								ds.id === "yc" ? "/yc.webp" :
 									ds.id === "tr" ? "/tr.png" :
 										ds.id === "bwj" ? "/bwj.jpg" :
-											"/custom.jpg"
+											"/baux.png"
 							} />
 						<p className="text-sm text-center line-clamp-1">
 							{ds.name}
@@ -98,32 +117,34 @@ export const DataSourceSelector = ({
 						</p>
 					</div>
 				</PopoverTrigger>
-				<PopoverContent className="h-30 w-80 border border-input/50 bg-input/30 
-					px-2 py-4 translate-y-2 border-b-8 ">
-					<div className="flex gap-2 items-center h-10">
-						<input type="url"
-							placeholder="https://example.com"
-							pattern="https://.*"
-							className="w-full p-1 outline"
-							onChange={(e) => {
-								e.preventDefault();
-								setUrl(e.target.value);
-							}}
+				<PopoverContent className="bg-background h-30 w-80 translate-y-2">
+					<div className="border border-input/50 bg-input/30 
+					px-2 py-4 border-b-8">
+						<div className="flex gap-2 items-center h-10">
+							<input type="url"
+								placeholder="https://example.com"
+								pattern="https://.*"
+								className="w-full p-1 outline"
+								onChange={(e) => {
+									e.preventDefault();
+									setUrl(e.target.value);
+								}}
 
-						/>
-					</div>
-					<div className="flex gap-2 items-center h-10">
-						<input placeholder="give your source a name"
-							className="w-full p-1 outline"
-							onChange={(e) => {
-								e.preventDefault();
-								setDsName(e.target.value);
-							}}
-						/>
-						<Button className="text-sm"
-							onClick={() => addNewDataSource()}>
-							Add
-						</Button>
+							/>
+						</div>
+						<div className="flex gap-2 items-center h-10">
+							<input placeholder="give your source a name"
+								className="w-full p-1 outline"
+								onChange={(e) => {
+									e.preventDefault();
+									setDsName(e.target.value);
+								}}
+							/>
+							<Button className="text-sm"
+								onClick={() => mutation.mutate()}>
+								Add
+							</Button>
+						</div>
 					</div>
 				</PopoverContent>
 			</Popover>

@@ -1,11 +1,11 @@
 import { auth, signIn } from "@/auth";
-import { NewsletterEditor } from "@/components/custom/editor/newsletter-editor";
+import { NewsletterEditor } from "@/components/custom/editor/newslettereditor";
 import { Button } from "@/components/ui/button";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Session } from "next-auth";
 import { headers } from "next/headers";
 import { getQueryClient } from "../get-query-client";
-import { getDataSources } from "@/lib/client-query";
+import { getStandardDataSources } from "@/lib/client-query";
 
 
 export default async function NewsletterPage() {
@@ -15,8 +15,8 @@ export default async function NewsletterPage() {
 
 	const queryClient = getQueryClient();
 	queryClient.prefetchQuery({
-		queryKey: ['dataSources'],
-		queryFn: async () => await getDataSources(origin)
+		queryKey: ['standardSources'],
+		queryFn: async () => await getStandardDataSources(origin)
 	});
 
 	return (

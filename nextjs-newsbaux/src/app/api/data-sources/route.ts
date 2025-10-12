@@ -1,12 +1,17 @@
 import { auth } from "@/auth";
-import { createDataSource, getStandardDataSources } from "@/db/queries/dataSources";
+import { createDataSource, getDataSourcesByUser, getStandardDataSources } from "@/db/queries/dataSources";
 import { DataSource } from "@/db/schema";
 import * as z from "zod";
 import { Session } from 'next-auth';
 
 export async function GET(request: Request) {
 	try {
-		const dataSources = await getStandardDataSources();
+		let dataSources: DataSource[] = [];
+		const session: Session | null = await auth();
+		console.log(session);
+		if (session && session.user && session.user.email) {
+			dataSources = [...dataSources, ...(await getDataSourcesByUser(session.user.email))];
+		}
 		return Response.json({
 			status: 200,
 			data: dataSources,
@@ -28,7 +33,6 @@ export const DataSourceZod = z.object({
 
 export async function POST(request: Request) {
 	const session: Session | null = await auth();
-	console.log(session);
 
 	if (!session) return Response.json({
 		status: 400,

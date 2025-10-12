@@ -65,7 +65,7 @@ export type Edition = typeof editionsTable.$inferSelect;
 export const editionSectionTable = sqliteTable('editionsSection', {
 	id: text('id').primaryKey().$defaultFn(() => v4()),
 	editionId: text('editionId').notNull().references(() => editionsTable.id, { onDelete: "cascade" }),
-	newsSectionId: text('newsSectionid').notNull().references(() => newsSectionTable.id, { onDelete: 'cascade' }),
+	newsSectionId: text('newsSectionId').notNull().references(() => newsSectionTable.id, { onDelete: 'cascade' }),
 	contents: text('contents'),
 	publishDate: text('publishDate').$defaultFn(() => (new Date()).toUTCString())
 		.$onUpdate(() => (new Date()).toUTCString()),

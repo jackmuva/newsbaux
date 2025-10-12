@@ -1,11 +1,11 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "439e21b3-ef77-4036-bfa7-7a3c6caa46ff",
+  "id": "3311daac-a2ea-4432-8839-4e49b4305070",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "": {
-      "name": "",
+    "articles": {
+      "name": "articles",
       "columns": {
         "id": {
           "name": "id",
@@ -14,8 +14,257 @@
           "notNull": true,
           "autoincrement": false
         },
-        "userId": {
-          "name": "userId",
+        "dataSourceId": {
+          "name": "dataSourceId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "contents": {
+          "name": "contents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "retrievalDate": {
+          "name": "retrievalDate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "summary": {
+          "name": "summary",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "articles_dataSourceId_datasources_id_fk": {
+          "name": "articles_dataSourceId_datasources_id_fk",
+          "tableFrom": "articles",
+          "tableTo": "datasources",
+          "columnsFrom": [
+            "dataSourceId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "datasources": {
+      "name": "datasources",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "url": {
+          "name": "url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "standard": {
+          "name": "standard",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "datasources_email_users_email_fk": {
+          "name": "datasources_email_users_email_fk",
+          "tableFrom": "datasources",
+          "tableTo": "users",
+          "columnsFrom": [
+            "email"
+          ],
+          "columnsTo": [
+            "email"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "editionsSection": {
+      "name": "editionsSection",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "editionId": {
+          "name": "editionId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "newsSectionId": {
+          "name": "newsSectionId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "contents": {
+          "name": "contents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "publishDate": {
+          "name": "publishDate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "editionsSection_editionId_editions_id_fk": {
+          "name": "editionsSection_editionId_editions_id_fk",
+          "tableFrom": "editionsSection",
+          "tableTo": "editions",
+          "columnsFrom": [
+            "editionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "editionsSection_newsSectionId_newsSection_id_fk": {
+          "name": "editionsSection_newsSectionId_newsSection_id_fk",
+          "tableFrom": "editionsSection",
+          "tableTo": "newsSection",
+          "columnsFrom": [
+            "newsSectionId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "editions": {
+      "name": "editions",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "newsletterId": {
+          "name": "newsletterId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "contents": {
+          "name": "contents",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "publishDate": {
+          "name": "publishDate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "editions_newsletterId_newsletters_id_fk": {
+          "name": "editions_newsletterId_newsletters_id_fk",
+          "tableFrom": "editions",
+          "tableTo": "newsletters",
+          "columnsFrom": [
+            "newsletterId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "newsSection": {
+      "name": "newsSection",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "email": {
+          "name": "email",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -27,26 +276,47 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "systemPrompt": {
+          "name": "systemPrompt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "dataSources": {
+          "name": "dataSources",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "_userId_users_id_fk": {
-          "name": "_userId_users_id_fk",
-          "tableFrom": "",
+        "newsSection_email_users_email_fk": {
+          "name": "newsSection_email_users_email_fk",
+          "tableFrom": "newsSection",
           "tableTo": "users",
           "columnsFrom": [
-            "userId"
+            "email"
           ],
           "columnsTo": [
-            "id"
+            "email"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
-        "_newsId_newsletters_id_fk": {
-          "name": "_newsId_newsletters_id_fk",
-          "tableFrom": "",
+        "newsSection_newsId_newsletters_id_fk": {
+          "name": "newsSection_newsId_newsletters_id_fk",
+          "tableFrom": "newsSection",
           "tableTo": "newsletters",
           "columnsFrom": [
             "newsId"
@@ -72,8 +342,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "userId": {
-          "name": "userId",
+        "email": {
+          "name": "email",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -96,15 +366,15 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "newsletters_userId_users_id_fk": {
-          "name": "newsletters_userId_users_id_fk",
+        "newsletters_email_users_email_fk": {
+          "name": "newsletters_email_users_email_fk",
           "tableFrom": "newsletters",
           "tableTo": "users",
           "columnsFrom": [
-            "userId"
+            "email"
           ],
           "columnsTo": [
-            "id"
+            "email"
           ],
           "onDelete": "cascade",
           "onUpdate": "no action"
@@ -117,8 +387,8 @@
     "users": {
       "name": "users",
       "columns": {
-        "id": {
-          "name": "id",
+        "email": {
+          "name": "email",
           "type": "text",
           "primaryKey": true,
           "notNull": true,
@@ -126,13 +396,6 @@
         },
         "name": {
           "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "email": {
-          "name": "email",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
