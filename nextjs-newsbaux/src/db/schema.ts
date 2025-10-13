@@ -36,7 +36,7 @@ export const newsSectionTable = sqliteTable('newsSection', {
 	newsId: text('newsId').notNull().references(() => newslettersTable.id, { onDelete: 'cascade' }),
 	title: text('title').notNull(),
 	systemPrompt: text('systemPrompt'),
-	dataSources: text("dataSources").$type<DataSource[]>(),
+	dataSources: text("dataSources", { mode: "json" }).$type<DataSource[]>(),
 });
 
 export type NewsSection = typeof newsSectionTable.$inferSelect;

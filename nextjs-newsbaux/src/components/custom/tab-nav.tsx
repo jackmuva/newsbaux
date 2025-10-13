@@ -36,7 +36,7 @@ export const TabNav = async () => {
 				return (
 					<a key={tab} href={origin + "/" + tab}
 						className={`gap-1 cursor-pointer px-4 italic
-								font-bold hover:bg-background 
+								font-bold hover:brightness-100
 								flex border items-center 
 								${styleArray[reindex(i)]}`}>
 						{i === 0 ? <PackageOpen size={25 - (reindex(i) * 3)} />

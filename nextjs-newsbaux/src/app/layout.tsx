@@ -32,7 +32,7 @@ export default function RootLayout({
 	return (
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} ${libreBask.variable} antialiased
-				w-dvw min-h-dvh h-fit bg-transparent border-r border-b-8 border-foreground/50 font-libre`}>
+				w-dvw h-dvh bg-transparent border-r border-b-8 border-foreground/50 font-libre`}>
 				<Providers>
 					{children}
 				</Providers>

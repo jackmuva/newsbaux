@@ -74,12 +74,13 @@ export const DataSourceSelector = ({
 			grid grid-cols-7 gap-4 p-2 overflow-y-auto">
 			{dataSources.map((ds: DataSource) => {
 				return (
-					<div key={ds.id} className={`h-fit flex flex-col 
+					<div key={ds.id} id={ds.id}
+						className={`h-fit flex flex-col 
 						items-center justify-between p-2 cursor-pointer border-input/30 
 						${!(ds.id in dsMap) ? `bg-input/20
 						border-2 border-b-6 active:border-b-2 hover:border-b-4 
 						hover:translate-y-0.5 active:translate-y-1` :
-							`bg-secondary/70 border-2 translate-y-1`}`}
+								`bg-secondary/70 border-2 translate-y-1`}`}
 						onClick={() => {
 							if (ds.id in dsMap) {
 								removeDataSource(ds);

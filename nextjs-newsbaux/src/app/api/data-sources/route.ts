@@ -8,7 +8,6 @@ export async function GET() {
 	try {
 		let dataSources: DataSource[] = [];
 		const session: Session | null = await auth();
-		console.log(session);
 		if (session && session.user && session.user.email) {
 			dataSources = [...dataSources, ...(await getDataSourcesByUser(session.user.email))];
 		}

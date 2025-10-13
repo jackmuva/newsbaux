@@ -1,11 +1,11 @@
 "use client";
 import { Section, useEditorStore } from "@/store/editor-store"
 import { SectionEditor } from "./section-editor";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { PenLineIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createNewNewsletter, getStandardDataSources, getUserDataSources } from "@/lib/client-queries";
+import { createNewNewsletter, getNewsletters, getStandardDataSources, getUserDataSources } from "@/lib/client-queries";
 import { Session } from "next-auth";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
@@ -25,23 +25,19 @@ export const NewsletterEditor = ({
 }: {
 	session: Session | null,
 }) => {
-	const newsTitleRef = useRef<HTMLTextAreaElement>(null);
 	const {
 		sections,
 		addSection,
+		setSections,
 	}: {
 		sections: Section[],
 		addSection: () => void,
+		setSections: (sections: Section[]) => void,
 	} = useEditorStore((state) => state);
 
 	const [cadence, setCadence] = useState<string>("");
 	const [name, setName] = useState<string>("");
 
-	useEffect(() => {
-		if (sections.length === 0) {
-			addSection();
-		}
-	}, [addSection, sections]);
 
 	const { data: standardSources } = useSuspenseQuery({
 		queryKey: ['standardSources'],
@@ -53,8 +49,30 @@ export const NewsletterEditor = ({
 		queryFn: async () => await getUserDataSources(window.location.origin),
 	});
 
+	const { data: newsletters } = useQuery({
+		queryKey: ['newsletters'],
+		queryFn: async () => await getNewsletters(window.location.origin),
+	});
+
+	useEffect(() => {
+		if (newsletters) {
+			setSections(newsletters.sections);
+			if (newsletters.newsletter.length > 0) {
+				setName(newsletters.newsletter[0].name);
+				setCadence(String(newsletters.newsletter[0].cadence));
+			}
+		}
+
+	}, [newsletters]);
+
+	useEffect(() => {
+		if (sections.length === 0) {
+			addSection();
+		}
+
+	}, [newsletters, addSection]);
+
 	const validateSections = (): boolean => {
-		console.log(sections);
 		for (const section of sections) {
 			if (!section.title || !section.systemPrompt) {
 				toast("Section titles and descriptions cannot be blank");
@@ -69,7 +87,8 @@ export const NewsletterEditor = ({
 	}
 
 	const createNewsletter = async () => {
-		const res = await createNewNewsletter(window.location.origin, cadence, name, sections);
+		const res = await createNewNewsletter(window.location.origin, cadence, name, sections,
+			newsletters?.newsletter[0].id);
 		if (res.status === 200) {
 			toast("Newsletter created");
 		} else {
@@ -82,14 +101,15 @@ export const NewsletterEditor = ({
 		autosizeTextArea(e.target);
 	};
 
-
 	return (
 		<>
 			{sections.length > 0 && <>
 				<div className="flex flex-col items-center relative">
-					<textarea ref={newsTitleRef} placeholder="Your Newsletter Title"
+					<textarea placeholder="Your Newsletter Title"
+						value={name}
 						rows={1}
-						className="w-full text-5xl outline-none resize-none"
+						className="w-full text-5xl outline-none resize-none
+							overflow-hidden"
 						onKeyDown={(e) => handleAutosize(e)}
 						onChange={(e) => {
 							e.preventDefault();
@@ -122,6 +142,7 @@ export const NewsletterEditor = ({
 								</DialogTitle>
 							</DialogHeader>
 							<select className="text-gray-400 outline p-1"
+								value={cadence}
 								onChange={(e) => {
 									e.preventDefault();
 									setCadence(e.target.value);

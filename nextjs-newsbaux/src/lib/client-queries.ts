@@ -1,4 +1,4 @@
-import { DataSource } from "@/db/schema";
+import { DataSource, Newsletter } from "@/db/schema";
 import { Section } from "@/store/editor-store";
 
 export const getStandardDataSources = async (origin: string): Promise<DataSource[]> => {
@@ -27,14 +27,22 @@ export const addNewDataSource = async (origin: string, url: string, dsName: stri
 	return await req.json();
 }
 
-export const createNewNewsletter = async (origin: string, cadence: string, name: string, sections: Section[]) => {
+export const createNewNewsletter = async (origin: string, cadence: string, name: string, sections: Section[], id?: string) => {
 	const req = await fetch(`${origin}/api/newsletter`, {
 		method: "POST",
 		body: JSON.stringify({
 			cadence: Number(cadence),
 			name: name,
 			sections: sections,
+			id: id,
 		}),
 	});
 	return await req.json();
+}
+
+export const getNewsletters = async (origin: string): Promise<{ newsletter: Newsletter[], sections: Section[] }> => {
+	const req = await fetch(`${origin}/api/newsletter`, {
+		method: "GET",
+	});
+	return (await req.json()).data;
 }

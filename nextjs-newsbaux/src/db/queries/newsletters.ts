@@ -2,13 +2,13 @@ import { eq } from 'drizzle-orm';
 import { db } from '../connection';
 import { Newsletter, newslettersTable } from '../schema';
 
-export const getNewslettersByUserId = async (email: string): Promise<Newsletter[] | null> => {
+export const getNewslettersByUserId = async (email: string): Promise<Newsletter[]> => {
 	try {
 		return await db.select().from(newslettersTable).where(eq(newslettersTable.email, email))
 	} catch (e) {
 		console.error("Unable to get newsletters: ", e);
 	}
-	return null;
+	return [];
 }
 
 export const createNewsletter = async (email: string, cadence: number, name: string): Promise<Newsletter | null> => {

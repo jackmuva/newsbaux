@@ -13,6 +13,7 @@ export type EditorState = {
 	sections: Section[],
 	upsertSection: (section: Section) => void,
 	addSection: () => void,
+	setSections: (sections: Section[]) => void,
 }
 
 export const useEditorStore = create<EditorState>((set, get, store) => ({
@@ -43,5 +44,7 @@ export const useEditorStore = create<EditorState>((set, get, store) => ({
 				dataSources: [],
 			}]
 		});
-	}
+	},
+
+	setSections: (sections: Section[]) => set({ sections: sections }),
 }))

@@ -42,7 +42,8 @@ export const SectionEditor = ({
 					onKeyDown={handleAutosize}
 					placeholder="Section Title (i.e. Tech News)"
 					rows={1}
-					className="w-full text-4xl outline-none resize-none mb-4">
+					className="w-full text-4xl outline-none resize-none mb-4 
+					overflow-hidden">
 				</textarea>
 				<textarea
 					value={systemPrompt}
@@ -51,7 +52,8 @@ export const SectionEditor = ({
 					rows={4}
 					placeholder={`what do you want to see from this section?
 (i.e. News relevant for a senior level backend engineer. Interested in system design and local-first web apps.)`}
-					className="w-full text-lg outline-none resize-none text-wrap">
+					className="w-full text-lg outline-none resize-none text-wrap 
+					overflow-hidden">
 				</textarea>
 				<DataSourceSelector section={section} dataSources={dataSources} />
 			</div>

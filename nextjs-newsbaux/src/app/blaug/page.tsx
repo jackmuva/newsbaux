@@ -6,9 +6,9 @@ export default async function BlaugPage() {
 	const session: Session | null = await auth();
 
 	return (
-		<div className="w-full min-h-dvh pt-12">
+		<div className="w-full h-full pt-12">
 			<TabNav />
-			<div className="bg-background w-full flex flex-col items-center gap-10 py-20">
+			<div className="h-full bg-background w-full flex flex-col items-center gap-10 py-20">
 			</div>
 		</div>
 	);
