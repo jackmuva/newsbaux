@@ -11,9 +11,9 @@ export const TabNav = async () => {
 
 	const styleArray = [
 		"bg-background h-full text-xl",
-		"bg-background/90 h-10 text-lg",
-		"bg-background/80 h-9 text-base",
-		"bg-background/70 h-8 text-sm"
+		"bg-background h-10 text-lg brightness-90",
+		"bg-background h-9 text-base brightness-75",
+		"bg-background h-8 text-sm brightness-50"
 	];
 
 	let start = 0;
