@@ -1,16 +1,15 @@
 "use client";
 import { Section, useEditorStore } from "@/store/editor-store"
 import { SectionEditor } from "./section-editor";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PenLineIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { getStandardDataSources, getUserDataSources } from "@/lib/client-query";
+import { createNewNewsletter, getStandardDataSources, getUserDataSources } from "@/lib/client-query";
 import { Session } from "next-auth";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
-import { DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger, DialogFooter, DialogHeader } from "@/components/ui/dialog";
 
 export const NewsletterEditor = ({
 	session,
@@ -24,6 +23,9 @@ export const NewsletterEditor = ({
 		sections: Section[],
 		addSection: () => void,
 	} = useEditorStore((state) => state);
+
+	const [cadence, setCadence] = useState<string>("");
+	const [name, setName] = useState<string>("");
 
 	useEffect(() => {
 		if (sections.length === 0) {
@@ -44,11 +46,24 @@ export const NewsletterEditor = ({
 	const validateSections = (): boolean => {
 		for (const section of sections) {
 			if (!section.title || !section.systemPrompt) {
-				toast("Section titles and descriptions cannot be blank")
+				toast("Section titles and descriptions cannot be blank");
 				return false;
 			}
 		}
+		if (!name || !cadence) {
+			toast("Newsletter name and cadence cannot be blank");
+			return false;
+		}
 		return true;
+	}
+
+	const createNewsletter = async () => {
+		const res = await createNewNewsletter(window.location.origin, cadence, name, sections);
+		if (res.ok) {
+			toast("Newsletter created");
+		} else {
+			toast("Failed to create newsletter");
+		}
 	}
 
 	return (
@@ -78,13 +93,31 @@ export const NewsletterEditor = ({
 
 							</DialogTitle>
 						</DialogHeader>
+						<select className="text-gray-400 outline p-1"
+							onChange={(e) => {
+								e.preventDefault();
+								setCadence(e.target.value);
+							}}>
+							<option value="">new edition every x days</option>
+							{[...Array(7).keys()].map((num) => {
+								return (<option key={num} value={num + 1}>
+									{num + 1}
+								</option>)
+							})}
+						</select>
 						<input placeholder="give your newsletter a name"
-							className="w-full p-1 outline" />
-						<DialogFooter>
+							className="w-full p-1 outline placeholder-gray-400"
+							onChange={(e) => {
+								e.preventDefault();
+								setName(e.target.value);
+							}} />
+						<DialogFooter className="h-10">
 							<DialogClose asChild>
 								<Button variant="outline">Cancel</Button>
 							</DialogClose>
-							<Button>Save changes</Button>
+							<Button>
+								Save changes
+							</Button>
 						</DialogFooter>
 					</DialogContent>
 				</Dialog>}

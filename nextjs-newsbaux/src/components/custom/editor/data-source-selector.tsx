@@ -10,8 +10,8 @@ import { CirclePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
-import { Dialog, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
-import { DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
 
 export const DataSourceSelector = ({
 	dataSources,
@@ -125,32 +125,33 @@ export const DataSourceSelector = ({
 							Add Source
 						</DialogTitle>
 					</DialogHeader>
-					<div>
-						<div className="flex gap-2 items-center h-10">
-							<input type="url"
-								placeholder="https://example.com"
-								pattern="https://.*"
-								className="w-full p-1 outline"
-								onChange={(e) => {
-									e.preventDefault();
-									setUrl(e.target.value);
-								}}
+					<div className="flex flex-col gap-2">
+						<input type="url"
+							placeholder="https://example.com"
+							pattern="https://.*"
+							className="placeholder-gray-400 w-full p-1 outline"
+							onChange={(e) => {
+								e.preventDefault();
+								setUrl(e.target.value);
+							}}
 
-							/>
-						</div>
-						<div className="flex gap-2 items-center h-10">
-							<input placeholder="give your source a name"
-								className="w-full p-1 outline"
-								onChange={(e) => {
-									e.preventDefault();
-									setDsName(e.target.value);
-								}}
-							/>
-							<Button className="text-sm"
-								onClick={() => mutation.mutate()}>
+						/>
+						<input placeholder="give your source a name"
+							className="placeholder-gray-400 w-full p-1 outline"
+							onChange={(e) => {
+								e.preventDefault();
+								setDsName(e.target.value);
+							}}
+						/>
+						<DialogFooter className="h-10">
+							<DialogClose asChild>
+								<Button variant="outline">Cancel</Button>
+							</DialogClose>
+							<Button onClick={() => mutation.mutate()}>
 								Add
 							</Button>
-						</div>
+						</DialogFooter>
+
 					</div>
 				</DialogContent>
 			</Dialog>
