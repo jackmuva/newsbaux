@@ -1,7 +1,7 @@
 "use client";
 import { Section, useEditorStore } from "@/store/editor-store"
 import { SectionEditor } from "./section-editor";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PenLineIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
@@ -16,6 +16,7 @@ export const NewsletterEditor = ({
 }: {
 	session: Session | null,
 }) => {
+	const newsTitleRef = useRef<HTMLTextAreaElement>(null);
 	const {
 		sections,
 		addSection,
@@ -66,9 +67,35 @@ export const NewsletterEditor = ({
 		}
 	}
 
+	useEffect(() => {
+		const autosize = (element: HTMLTextAreaElement) => {
+			setTimeout(() => {
+				element.style.cssText = 'height:auto; padding:0';
+				element.style.cssText = 'height:' + element.scrollHeight + 'px';
+			}, 0);
+		};
+
+		const handleTitleKeydown = () => newsTitleRef.current && autosize(newsTitleRef.current);
+
+		newsTitleRef.current?.addEventListener('keydown', handleTitleKeydown);
+
+		return () => {
+			newsTitleRef.current?.removeEventListener('keydown', handleTitleKeydown);
+		};
+	}, []);
+
+
 	return (
 		<>
 			<div className="flex flex-col items-center relative">
+				<textarea ref={newsTitleRef} placeholder="Your Newsletter Title"
+					rows={1}
+					className="w-full text-5xl outline-none resize-none"
+					onChange={(e) => {
+						e.preventDefault();
+						setName(e.target.value);
+					}}>
+				</textarea>
 				{sections.map((section: Section) => {
 					return <SectionEditor key={section.id} section={section} dataSources={[...standardSources, ...userSources ?? []]} />
 				})}
@@ -105,12 +132,6 @@ export const NewsletterEditor = ({
 								</option>)
 							})}
 						</select>
-						<input placeholder="give your newsletter a name"
-							className="w-full p-1 outline placeholder-gray-400"
-							onChange={(e) => {
-								e.preventDefault();
-								setName(e.target.value);
-							}} />
 						<DialogFooter className="h-10">
 							<DialogClose asChild>
 								<Button variant="outline">Cancel</Button>

@@ -61,7 +61,7 @@ export const SectionEditor = ({
 			<div className={"px-8"}>
 				<textarea ref={titleRef} placeholder="Section Title (i.e. Tech News)"
 					rows={1}
-					className="w-full text-5xl outline-none resize-none mb-4">
+					className="w-full text-4xl outline-none resize-none mb-4">
 				</textarea>
 				<textarea ref={descRef} rows={4}
 					placeholder={`what do you want to see from this section?
