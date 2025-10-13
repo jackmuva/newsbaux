@@ -12,7 +12,8 @@ export type User = typeof usersTable.$inferSelect;
 export const newslettersTable = sqliteTable('newsletters', {
 	id: text('id').primaryKey().$defaultFn(() => v4()),
 	email: text('email').notNull().references(() => usersTable.email, { onDelete: 'cascade' }),
-	cadence: integer('cadence'),
+	name: text('name').notNull(),
+	cadence: integer('cadence').notNull(),
 	updatedAt: text('updatedAt').$defaultFn(() => (new Date()).toUTCString())
 		.$onUpdate(() => (new Date()).toUTCString()),
 });

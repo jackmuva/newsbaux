@@ -10,6 +10,8 @@ import { CirclePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import Image from "next/image";
+import { Dialog, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
+import { DialogContent, DialogHeader } from "@/components/ui/dialog";
 
 export const DataSourceSelector = ({
 	dataSources,
@@ -102,8 +104,8 @@ export const DataSourceSelector = ({
 					</div>
 				);
 			})}
-			<Popover>
-				<PopoverTrigger asChild>
+			<Dialog>
+				<DialogTrigger asChild>
 					<div className="h-fit flex flex-col 
 						items-center justify-between p-2 cursor-pointer 						
 						border-input/30 bg-input/20
@@ -116,10 +118,14 @@ export const DataSourceSelector = ({
 							Add Source
 						</p>
 					</div>
-				</PopoverTrigger>
-				<PopoverContent className="bg-background h-30 w-80 translate-y-2">
-					<div className="border border-input/50 bg-input/30 
-					px-2 py-4 border-b-8">
+				</DialogTrigger>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>
+							Add Source
+						</DialogTitle>
+					</DialogHeader>
+					<div>
 						<div className="flex gap-2 items-center h-10">
 							<input type="url"
 								placeholder="https://example.com"
@@ -146,8 +152,8 @@ export const DataSourceSelector = ({
 							</Button>
 						</div>
 					</div>
-				</PopoverContent>
-			</Popover>
+				</DialogContent>
+			</Dialog>
 			<Toaster position="top-center" />
 		</div>
 	);

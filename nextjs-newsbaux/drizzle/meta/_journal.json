@@ -8,6 +8,13 @@
       "when": 1760296412295,
       "tag": "0000_even_demogoblin",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1760367118658,
+      "tag": "0001_brief_timeslip",
+      "breakpoints": true
     }
   ]
 }

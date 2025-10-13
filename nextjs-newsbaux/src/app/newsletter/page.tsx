@@ -1,5 +1,5 @@
 import { auth, signIn } from "@/auth";
-import { NewsletterEditor } from "@/components/custom/editor/newslettereditor";
+import { NewsletterEditor } from "@/components/custom/editor/newsletter-editor";
 import { Button } from "@/components/ui/button";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Session } from "next-auth";
@@ -22,17 +22,16 @@ export default async function NewsletterPage() {
 	return (
 		<div className="w-dvw min-h-dvh h-fit border flex flex-col py-20 items-center gap-10">
 			<HydrationBoundary state={dehydrate(queryClient)}>
-				<NewsletterEditor />
+				<NewsletterEditor session={session} />
 			</HydrationBoundary>
-			<form action={async () => {
+			{!session && <form action={async () => {
 				"use server";
 				await signIn("github");
 			}}>
 				<Button className="font-bold text-lg italic" type="submit">
 					Create Newsletter
 				</Button>
-			</form>
-
+			</form>}
 		</div>
 	);
 }
