@@ -41,7 +41,7 @@ export const NewsletterEditor = ({
 		if (sections.length === 0) {
 			addSection();
 		}
-	}, [sections]);
+	}, [addSection, sections]);
 
 	const { data: standardSources } = useSuspenseQuery({
 		queryKey: ['standardSources'],

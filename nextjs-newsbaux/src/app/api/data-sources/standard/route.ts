@@ -1,7 +1,7 @@
 import { getStandardDataSources } from "@/db/queries/dataSources";
 import { DataSource } from "@/db/schema";
 
-export async function GET(request: Request) {
+export async function GET() {
 	try {
 		let dataSources: DataSource[] = [];
 		dataSources = [...dataSources, ...(await getStandardDataSources())];

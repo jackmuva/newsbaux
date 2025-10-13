@@ -1,10 +1,8 @@
 import { getQueryClient } from "@/app/get-query-client";
 import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/sonner";
 import { DataSource } from "@/db/schema";
 import { addNewDataSource } from "@/lib/client-queries";
 import { Section, useEditorStore } from "@/store/editor-store";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { useMutation } from "@tanstack/react-query";
 import { CirclePlus } from "lucide-react";
 import { useState } from "react";
@@ -51,7 +49,7 @@ export const DataSourceSelector = ({
 				toast("source requires a name");
 				return false;
 			}
-		} catch (e) {
+		} catch (_) {
 			toast("not a valid url");
 			return false;
 		}

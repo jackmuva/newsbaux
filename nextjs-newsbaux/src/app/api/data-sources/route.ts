@@ -1,10 +1,10 @@
 import { auth } from "@/auth";
-import { createDataSource, getDataSourcesByUser, getStandardDataSources } from "@/db/queries/dataSources";
+import { createDataSource, getDataSourcesByUser } from "@/db/queries/dataSources";
 import { DataSource } from "@/db/schema";
 import * as z from "zod";
 import { Session } from 'next-auth';
 
-export async function GET(request: Request) {
+export async function GET() {
 	try {
 		let dataSources: DataSource[] = [];
 		const session: Session | null = await auth();
