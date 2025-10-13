@@ -20,8 +20,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
 			toastOptions={{
 				unstyled: true,
 				classNames: {
-					toast: `bg-input/30 p-2 text-center rounded-none
-						border-2 border-b-6 border-input/50`,
+					toast: `bg-foreground text-background p-2 text-center rounded-none
+						italic shadow-2xl`,
 				},
 			}}
 

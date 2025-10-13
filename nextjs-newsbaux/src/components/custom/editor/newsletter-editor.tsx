@@ -5,11 +5,20 @@ import { useEffect, useRef, useState } from "react";
 import { PenLineIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
-import { createNewNewsletter, getStandardDataSources, getUserDataSources } from "@/lib/client-query";
+import { createNewNewsletter, getStandardDataSources, getUserDataSources } from "@/lib/client-queries";
 import { Session } from "next-auth";
 import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
-import { Dialog, DialogClose, DialogContent, DialogTitle, DialogTrigger, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogTitle,
+	DialogTrigger,
+	DialogFooter,
+	DialogHeader
+} from "@/components/ui/dialog";
+import { autosizeTextArea, handleAutosize } from "@/lib/utils";
 
 export const NewsletterEditor = ({
 	session,
@@ -45,6 +54,7 @@ export const NewsletterEditor = ({
 	});
 
 	const validateSections = (): boolean => {
+		console.log(sections);
 		for (const section of sections) {
 			if (!section.title || !section.systemPrompt) {
 				toast("Section titles and descriptions cannot be blank");
@@ -60,29 +70,17 @@ export const NewsletterEditor = ({
 
 	const createNewsletter = async () => {
 		const res = await createNewNewsletter(window.location.origin, cadence, name, sections);
-		if (res.ok) {
+		if (res.status === 200) {
 			toast("Newsletter created");
 		} else {
 			toast("Failed to create newsletter");
 		}
 	}
 
-	useEffect(() => {
-		const autosize = (element: HTMLTextAreaElement) => {
-			setTimeout(() => {
-				element.style.cssText = 'height:auto; padding:0';
-				element.style.cssText = 'height:' + element.scrollHeight + 'px';
-			}, 0);
-		};
-
-		const handleTitleKeydown = () => newsTitleRef.current && autosize(newsTitleRef.current);
-
-		newsTitleRef.current?.addEventListener('keydown', handleTitleKeydown);
-
-		return () => {
-			newsTitleRef.current?.removeEventListener('keydown', handleTitleKeydown);
-		};
-	}, []);
+	const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+		setName(e.target.value);
+		autosizeTextArea(e.target);
+	};
 
 
 	return (
@@ -92,9 +90,10 @@ export const NewsletterEditor = ({
 					<textarea ref={newsTitleRef} placeholder="Your Newsletter Title"
 						rows={1}
 						className="w-full text-5xl outline-none resize-none"
+						onKeyDown={(e) => handleAutosize(e)}
 						onChange={(e) => {
 							e.preventDefault();
-							setName(e.target.value);
+							handleTitleChange(e);
 						}}>
 					</textarea>
 					{sections.map((section: Section) => {
@@ -138,13 +137,15 @@ export const NewsletterEditor = ({
 								<DialogClose asChild>
 									<Button variant="outline">Cancel</Button>
 								</DialogClose>
-								<Button>
-									Save changes
+								<Button onClick={() => {
+									if (validateSections()) createNewsletter()
+								}}>
+									Create
 								</Button>
 							</DialogFooter>
 						</DialogContent>
 					</Dialog>}
-				<Toaster />
+				<Toaster position="top-center" />
 			</>}
 		</>
 	);

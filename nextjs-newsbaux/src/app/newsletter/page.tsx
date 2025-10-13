@@ -5,7 +5,7 @@ import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Session } from "next-auth";
 import { headers } from "next/headers";
 import { getQueryClient } from "../get-query-client";
-import { getStandardDataSources } from "@/lib/client-query";
+import { getStandardDataSources } from "@/lib/client-queries";
 
 
 export default async function NewsletterPage() {
