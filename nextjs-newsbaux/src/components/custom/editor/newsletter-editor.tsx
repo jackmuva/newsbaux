@@ -87,62 +87,65 @@ export const NewsletterEditor = ({
 
 	return (
 		<>
-			<div className="flex flex-col items-center relative">
-				<textarea ref={newsTitleRef} placeholder="Your Newsletter Title"
-					rows={1}
-					className="w-full text-5xl outline-none resize-none"
-					onChange={(e) => {
-						e.preventDefault();
-						setName(e.target.value);
-					}}>
-				</textarea>
-				{sections.map((section: Section) => {
-					return <SectionEditor key={section.id} section={section} dataSources={[...standardSources, ...userSources ?? []]} />
-				})}
-				<Button variant={"outline"}
-					className="text-lg absolute flex items-center gap-1 -bottom-2.5"
-					onClick={() => addSection()}>
-					<PenLineIcon size={20} />
-					<p>Add Section</p>
-				</Button>
-			</div>
-			{session &&
-				<Dialog>
-					<DialogTrigger asChild>
-						<Button className="font-bold text-lg italic">
-							Create Newsletter
-						</Button>
-					</DialogTrigger>
-					<DialogContent>
-						<DialogHeader>
-							<DialogTitle>
+			{sections.length > 0 && <>
+				<div className="flex flex-col items-center relative">
+					<textarea ref={newsTitleRef} placeholder="Your Newsletter Title"
+						rows={1}
+						className="w-full text-5xl outline-none resize-none"
+						onChange={(e) => {
+							e.preventDefault();
+							setName(e.target.value);
+						}}>
+					</textarea>
+					{sections.map((section: Section) => {
+						return <SectionEditor key={section.id}
+							section={section}
+							dataSources={[...standardSources, ...userSources ?? []]} />
+					})}
+					<Button variant={"outline"}
+						className="text-lg absolute flex items-center gap-1 -bottom-2.5"
+						onClick={() => addSection()}>
+						<PenLineIcon size={20} />
+						<p>Add Section</p>
+					</Button>
+				</div>
+				{session &&
+					<Dialog>
+						<DialogTrigger asChild>
+							<Button className="font-bold text-lg italic">
 								Create Newsletter
-
-							</DialogTitle>
-						</DialogHeader>
-						<select className="text-gray-400 outline p-1"
-							onChange={(e) => {
-								e.preventDefault();
-								setCadence(e.target.value);
-							}}>
-							<option value="">new edition every x days</option>
-							{[...Array(7).keys()].map((num) => {
-								return (<option key={num} value={num + 1}>
-									{num + 1}
-								</option>)
-							})}
-						</select>
-						<DialogFooter className="h-10">
-							<DialogClose asChild>
-								<Button variant="outline">Cancel</Button>
-							</DialogClose>
-							<Button>
-								Save changes
 							</Button>
-						</DialogFooter>
-					</DialogContent>
-				</Dialog>}
-			<Toaster />
+						</DialogTrigger>
+						<DialogContent>
+							<DialogHeader>
+								<DialogTitle>
+									Delivery
+								</DialogTitle>
+							</DialogHeader>
+							<select className="text-gray-400 outline p-1"
+								onChange={(e) => {
+									e.preventDefault();
+									setCadence(e.target.value);
+								}}>
+								<option value="">new edition every x days</option>
+								{[...Array(7).keys()].map((num) => {
+									return (<option key={num} value={num + 1}>
+										{num + 1}
+									</option>)
+								})}
+							</select>
+							<DialogFooter className="h-10">
+								<DialogClose asChild>
+									<Button variant="outline">Cancel</Button>
+								</DialogClose>
+								<Button>
+									Save changes
+								</Button>
+							</DialogFooter>
+						</DialogContent>
+					</Dialog>}
+				<Toaster />
+			</>}
 		</>
 	);
 }
