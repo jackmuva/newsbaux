@@ -23,7 +23,8 @@ export default async function EditorPage() {
 	return (
 		<div className="w-full h-full pt-12">
 			<TabNav />
-			<div className="h-full bg-background w-full flex flex-col items-center gap-10 py-20">
+			<div className="h-full bg-background w-full flex flex-col items-center 
+				gap-10 py-20 overflow-y-auto">
 				<HydrationBoundary state={dehydrate(queryClient)}>
 					<NewsletterEditor session={session} />
 				</HydrationBoundary>
