@@ -14,6 +14,7 @@ export type EditorState = {
 	upsertSection: (section: Section) => void,
 	addSection: () => void,
 	setSections: (sections: Section[]) => void,
+	removeSection: (section: Section) => void,
 }
 
 export const useEditorStore = create<EditorState>((set, get, store) => ({
@@ -33,6 +34,10 @@ export const useEditorStore = create<EditorState>((set, get, store) => ({
 		}
 		if (!pushed) newSections.push(section);
 		set({ sections: newSections });
+	},
+
+	removeSection: (section: Section) => {
+		set({ sections: [...get().sections.filter((sec) => sec.id !== section.id)] });
 	},
 
 	addSection: () => {

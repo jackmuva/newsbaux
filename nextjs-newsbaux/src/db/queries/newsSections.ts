@@ -62,9 +62,9 @@ export const updateNewsSection = async (id: string, title: string, systemPrompt:
 	return null;
 }
 
-export const deleteNewsSection = async (id: string): Promise<void> => {
+export const deleteNewsSectionByNewsletterId = async (newsId: string): Promise<void> => {
 	try {
-		await db.delete(newsSectionTable).where(eq(newsSectionTable.id, id));
+		await db.delete(newsSectionTable).where(eq(newsSectionTable.newsId, newsId));
 	} catch (e) {
 		console.error("unable to delete section: ", e);
 	}

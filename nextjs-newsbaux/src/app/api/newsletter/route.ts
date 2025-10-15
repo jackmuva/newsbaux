@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import * as z from "zod";
 import { Session } from 'next-auth';
 import { createNewsletter, getNewslettersByUserId, updateNewsletter } from "@/db/queries/newsletters";
-import { createNewsSection, getNewsSectionsByNewsletterId, upsertNewsSection } from "@/db/queries/newsSections";
+import { createNewsSection, deleteNewsSectionByNewsletterId, getNewsSectionsByNewsletterId, upsertNewsSection } from "@/db/queries/newsSections";
 import { Newsletter, NewsSection } from "@/db/schema";
 import { Section } from "@/store/editor-store";
 
@@ -100,6 +100,7 @@ export async function POST(request: Request) {
 			status: 500,
 			message: "unable to create newsletter",
 		});
+		await deleteNewsSectionByNewsletterId(newsletter.id);
 		for (const section of nz.sections) {
 			await upsertNewsSection(section.id, nz.email, newsletter.id, section.title, section.systemPrompt, section.dataSources);
 		}
