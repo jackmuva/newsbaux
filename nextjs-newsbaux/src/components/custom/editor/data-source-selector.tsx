@@ -71,12 +71,12 @@ export const DataSourceSelector = ({
 
 	return (
 		<div className="w-full h-60 bg-input/10 
-			grid grid-cols-7 gap-4 p-2 overflow-y-auto">
+			grid grid-cols-5 gap-4 p-2 overflow-y-auto">
 			{dataSources.map((ds: DataSource) => {
 				return (
 					<div key={ds.id} id={ds.id}
-						className={`h-fit flex flex-col 
-						items-center justify-between p-2 cursor-pointer border-input/30 
+						className={`flex h-16 justify-center gap-1
+						items-center p-2 cursor-pointer border-input/30 
 						${!(ds.id in dsMap) ? `bg-input/20
 						border-2 border-b-6 active:border-b-2 hover:border-b-4 
 						hover:translate-y-0.5 active:translate-y-1` :
@@ -88,16 +88,16 @@ export const DataSourceSelector = ({
 								addDataSource(ds)
 							}
 						}}>
-						<Image className="rounded-sm mb-1"
-							width={60}
-							height={60}
+						<img className="rounded-sm mb-1"
+							width={20}
+							height={20}
 							alt={ds.name} src={
 								ds.id === "yc" ? "/yc.webp" :
 									ds.id === "tr" ? "/tr.png" :
 										ds.id === "bwj" ? "/bwj.jpg" :
-											"/baux.png"
+											"https://www.google.com/s2/favicons?domain=" + ds.url
 							} />
-						<p className="text-sm text-center line-clamp-1">
+						<p className="text-sm text-center line-clamp-2">
 							{ds.name}
 						</p>
 					</div>
@@ -105,15 +105,13 @@ export const DataSourceSelector = ({
 			})}
 			<Dialog>
 				<DialogTrigger asChild>
-					<div className="h-fit flex flex-col 
-						items-center justify-between p-2 cursor-pointer 						
+					<div className="h-16 flex gap-1 justify-center
+						items-center p-2 cursor-pointer 						
 						border-input/30 bg-input/20
 						border-2 border-b-6 active:border-b-2 hover:border-b-4 
 						hover:translate-y-0.5 active:translate-y-1">
-						<div className="h-16 w-16 flex justify-center items-center p-2">
-							<CirclePlus className="h-full w-full" />
-						</div>
-						<p className="text-sm text-center line-clamp-1">
+						<CirclePlus className="h-5 w-5" />
+						<p className="text-sm text-center line-clamp-2">
 							Add Source
 						</p>
 					</div>
