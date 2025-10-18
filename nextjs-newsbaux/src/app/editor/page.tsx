@@ -33,7 +33,7 @@ export default async function EditorPage() {
 					await signIn("github");
 				}}>
 					<Button className="font-bold text-lg italic" type="submit">
-						Create Newsletter
+						Publish Newsletter
 					</Button>
 				</form>}
 			</div>

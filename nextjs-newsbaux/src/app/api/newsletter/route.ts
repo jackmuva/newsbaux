@@ -4,7 +4,6 @@ import { Session } from 'next-auth';
 import { createNewsletter, getNewslettersByUserId, updateNewsletter } from "@/db/queries/newsletters";
 import { createNewsSection, deleteNewsSectionByNewsletterId, getNewsSectionsByNewsletterId, upsertNewsSection } from "@/db/queries/newsSections";
 import { Newsletter, NewsSection } from "@/db/schema";
-import { Section } from "@/store/editor-store";
 
 export const NewsletterZod = z.object({
 	id: z.string().nullable(),

@@ -71,6 +71,19 @@ export const DataSourceSelector = ({
 		},
 	});
 
+
+	const deleteSource = async (dataSource: DataSource) => {
+		const req = await fetch(`${window.location.origin}/api/data-sources`, {
+			method: "DELETE",
+			body: JSON.stringify(dataSource),
+		});
+		if (req.status === 200) {
+			queryClient.invalidateQueries({ queryKey: ['userSources'] })
+		} else {
+			toast("unable to delete");
+		}
+	}
+
 	return (
 		<div className="w-full h-60 bg-input/10 content-start
 			grid grid-cols-5 gap-4 p-2 overflow-y-auto">
@@ -108,7 +121,8 @@ export const DataSourceSelector = ({
 						</ContextMenuTrigger>
 						<ContextMenuContent className="bg-popover">
 							<ContextMenuItem className="p-0">
-								<Button variant={"destructive"} size={"sm"}>
+								<Button variant={"destructive"} size={"sm"}
+									onClick={() => deleteSource(ds)}>
 									Delete
 								</Button>
 							</ContextMenuItem>

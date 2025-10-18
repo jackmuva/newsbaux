@@ -132,7 +132,7 @@ export const NewsletterEditor = ({
 					<Dialog>
 						<DialogTrigger asChild>
 							<Button className="font-bold text-lg italic">
-								Create Newsletter
+								Publish Newsletter
 							</Button>
 						</DialogTrigger>
 						<DialogContent>
@@ -150,7 +150,7 @@ export const NewsletterEditor = ({
 								<option value="">new edition every x days</option>
 								{[...Array(7).keys()].map((num) => {
 									return (<option key={num} value={num + 1}>
-										{num + 1}
+										every {num + 1} day(s)
 									</option>)
 								})}
 							</select>
@@ -161,7 +161,7 @@ export const NewsletterEditor = ({
 								<Button onClick={() => {
 									if (validateSections()) createNewsletter()
 								}}>
-									Create
+									Publish
 								</Button>
 							</DialogFooter>
 						</DialogContent>
