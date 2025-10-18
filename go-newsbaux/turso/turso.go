@@ -3,6 +3,7 @@ package turso
 import (
 	"database/sql"
 	"fmt"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
 	"os"
 	"strings"
 	"time"
