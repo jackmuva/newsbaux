@@ -49,7 +49,7 @@ export const NewsletterEditor = ({
 		queryFn: async () => await getUserDataSources(window.location.origin),
 	});
 
-	const { data: newsletters } = useQuery({
+	const { data: newsletters, isLoading: isNewsLoading } = useQuery({
 		queryKey: ['newsletters'],
 		queryFn: async () => await getNewsletters(window.location.origin),
 	});
@@ -63,14 +63,14 @@ export const NewsletterEditor = ({
 			}
 		}
 
-	}, [newsletters]);
+	}, [newsletters, setSections]);
 
 	useEffect(() => {
 		if (sections.length === 0) {
 			addSection();
 		}
 
-	}, [newsletters, addSection]);
+	}, [newsletters, addSection, sections.length]);
 
 	const validateSections = (): boolean => {
 		for (const section of sections) {
@@ -103,7 +103,7 @@ export const NewsletterEditor = ({
 
 	return (
 		<>
-			{sections.length > 0 && <>
+			{sections.length > 0 && !isNewsLoading && <>
 				<div className="flex flex-col items-center relative">
 					<textarea placeholder="Your Newsletter Title"
 						value={name}

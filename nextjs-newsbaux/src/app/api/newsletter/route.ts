@@ -2,7 +2,7 @@ import { auth } from "@/auth";
 import * as z from "zod";
 import { Session } from 'next-auth';
 import { createNewsletter, getNewslettersByUserId, updateNewsletter } from "@/db/queries/newsletters";
-import { createNewsSection, deleteNewsSectionByNewsletterId, getNewsSectionsByNewsletterId, upsertNewsSection } from "@/db/queries/newsSections";
+import { deleteNewsSectionByNewsletterId, getNewsSectionsByNewsletterId, upsertNewsSection } from "@/db/queries/newsSections";
 import { Newsletter, NewsSection } from "@/db/schema";
 
 export const NewsletterZod = z.object({

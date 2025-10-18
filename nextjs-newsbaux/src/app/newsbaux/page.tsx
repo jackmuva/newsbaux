@@ -1,9 +1,9 @@
-import { Session } from "next-auth";
-import { auth } from "@/auth";
+// import { Session } from "next-auth";
+// import { auth } from "@/auth";
 import { TabNav } from "@/components/custom/tab-nav";
 
 export default async function NewsbauxPage() {
-	const session: Session | null = await auth();
+	// const session: Session | null = await auth();
 	return (
 		<div className="w-full h-full pt-12">
 			<TabNav />
