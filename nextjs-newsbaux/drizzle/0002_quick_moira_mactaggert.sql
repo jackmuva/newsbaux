@@ -1,0 +1,1 @@
+ALTER TABLE `newsletters` ADD `sendTime` integer DEFAULT 11 NOT NULL;

@@ -37,6 +37,7 @@ export const NewsletterEditor = ({
 
 	const [cadence, setCadence] = useState<string>("");
 	const [name, setName] = useState<string>("");
+	const [sendTime, setSendTime] = useState<number>(7);
 
 
 	const { data: standardSources } = useSuspenseQuery({
@@ -88,6 +89,7 @@ export const NewsletterEditor = ({
 
 	const createNewsletter = async () => {
 		const res = await createNewNewsletter(window.location.origin, cadence, name, sections,
+			new Date(new Date().setHours(sendTime, 0, 0, 0)).getUTCHours(),
 			newsletters?.newsletter[0].id);
 		if (res.status === 200) {
 			toast("Newsletter published");
@@ -151,6 +153,19 @@ export const NewsletterEditor = ({
 								{[...Array(7).keys()].map((num) => {
 									return (<option key={num} value={num + 1}>
 										every {num + 1} day(s)
+									</option>)
+								})}
+							</select>
+							<select className="text-gray-400 outline p-1"
+								value={sendTime}
+								onChange={(e) => {
+									e.preventDefault();
+									setSendTime(Number(e.target.value));
+								}}>
+								<option value="">at x o' clock</option>
+								{[...Array(24).keys()].map((num) => {
+									return (<option key={num} value={num + 1}>
+										at {num + 1} o' clock
 									</option>)
 								})}
 							</select>

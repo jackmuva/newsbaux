@@ -27,7 +27,7 @@ export const addNewDataSource = async (origin: string, url: string, dsName: stri
 	return await req.json();
 }
 
-export const createNewNewsletter = async (origin: string, cadence: string, name: string, sections: Section[], id?: string) => {
+export const createNewNewsletter = async (origin: string, cadence: string, name: string, sections: Section[], sendTime?: number, id?: string) => {
 	const req = await fetch(`${origin}/api/newsletter`, {
 		method: "POST",
 		body: JSON.stringify({
@@ -35,6 +35,7 @@ export const createNewNewsletter = async (origin: string, cadence: string, name:
 			name: name,
 			sections: sections,
 			id: id,
+			sendTime: sendTime ?? 11,
 		}),
 	});
 	return await req.json();

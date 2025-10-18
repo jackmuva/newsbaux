@@ -15,6 +15,13 @@
       "when": 1760367118658,
       "tag": "0001_brief_timeslip",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1760822046642,
+      "tag": "0002_quick_moira_mactaggert",
+      "breakpoints": true
     }
   ]
 }

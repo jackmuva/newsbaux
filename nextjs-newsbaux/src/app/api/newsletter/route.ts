@@ -9,6 +9,7 @@ export const NewsletterZod = z.object({
 	id: z.string().nullable(),
 	email: z.string(),
 	cadence: z.number(),
+	sendTime: z.number(),
 	name: z.string(),
 	sections: z.array(z.object({
 		id: z.string(),
@@ -91,9 +92,9 @@ export async function POST(request: Request) {
 		const existing: boolean = (await getNewslettersByUserId(nz.email)).length > 0;
 		let newsletter: Newsletter | null = null;
 		if (!existing) {
-			newsletter = await createNewsletter(nz.email, nz.cadence, nz.name);
+			newsletter = await createNewsletter(nz.email, nz.cadence, nz.name, nz.sendTime);
 		} else if (nz.id) {
-			newsletter = await updateNewsletter(nz.id, nz.cadence, nz.name);
+			newsletter = await updateNewsletter(nz.id, nz.cadence, nz.name, nz.sendTime);
 		}
 		if (!newsletter) return Response.json({
 			status: 500,

@@ -14,6 +14,7 @@ export const newslettersTable = sqliteTable('newsletters', {
 	email: text('email').notNull().references(() => usersTable.email, { onDelete: 'cascade' }),
 	name: text('name').notNull(),
 	cadence: integer('cadence').notNull(),
+	sendTime: integer('sendTime').default(11).notNull(),
 	updatedAt: text('updatedAt').$defaultFn(() => (new Date()).toUTCString())
 		.$onUpdate(() => (new Date()).toUTCString()),
 });
