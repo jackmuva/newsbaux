@@ -27,8 +27,8 @@ func GetEnv() *EnvVars {
 		envVars = &EnvVars{
 			AuthSecret:       os.Getenv("AUTH_SECRET"),
 			FrontendBaseUrl:  os.Getenv("FRONTEND_BASE_URL"),
-			TursoDatabaseUrl: os.Getenv("TURSO_DATABASE_URL"),
-			TursoAuthToken:   os.Getenv("TURSO_AUTH_TOKEN"),
+			TursoDatabaseUrl: os.Getenv("TURSO_URL"),
+			TursoAuthToken:   os.Getenv("TURSO_TOKEN"),
 		}
 	})
 	return envVars
