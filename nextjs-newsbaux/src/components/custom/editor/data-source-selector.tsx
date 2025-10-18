@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import Image from "next/image";
 import { Dialog, DialogClose, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import { DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
+import { ContextMenu, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
+import { ContextMenuContent } from "@radix-ui/react-context-menu";
 
 export const DataSourceSelector = ({
 	dataSources,
@@ -70,37 +72,48 @@ export const DataSourceSelector = ({
 	});
 
 	return (
-		<div className="w-full h-60 bg-input/10 
+		<div className="w-full h-60 bg-input/10 content-start
 			grid grid-cols-5 gap-4 p-2 overflow-y-auto">
 			{dataSources.map((ds: DataSource) => {
 				return (
-					<div key={ds.id} id={ds.id}
-						className={`flex h-16 justify-center gap-1
+					<ContextMenu key={ds.id}>
+						<ContextMenuTrigger>
+							<div key={ds.id} id={ds.id}
+								className={`flex h-16 justify-center gap-1
 						items-center p-2 cursor-pointer border-input/30 
 						${!(ds.id in dsMap) ? `bg-input/20
 						border-2 border-b-6 active:border-b-2 hover:border-b-4 
 						hover:translate-y-0.5 active:translate-y-1` :
-								`bg-secondary/70 border-2 translate-y-1`}`}
-						onClick={() => {
-							if (ds.id in dsMap) {
-								removeDataSource(ds);
-							} else {
-								addDataSource(ds)
-							}
-						}}>
-						<img className="rounded-sm mb-1"
-							width={20}
-							height={20}
-							alt={ds.name} src={
-								ds.id === "yc" ? "/yc.webp" :
-									ds.id === "tr" ? "/tr.png" :
-										ds.id === "bwj" ? "/bwj.jpg" :
-											"https://www.google.com/s2/favicons?domain=" + ds.url
-							} />
-						<p className="text-sm text-center line-clamp-2">
-							{ds.name}
-						</p>
-					</div>
+										`bg-secondary/70 border-2 translate-y-1`}`}
+								onClick={() => {
+									if (ds.id in dsMap) {
+										removeDataSource(ds);
+									} else {
+										addDataSource(ds)
+									}
+								}}>
+								<img className="rounded-sm mb-1"
+									width={20}
+									height={20}
+									alt={ds.name} src={
+										ds.id === "yc" ? "/yc.webp" :
+											ds.id === "tr" ? "/tr.png" :
+												ds.id === "bwj" ? "/bwj.jpg" :
+													"https://www.google.com/s2/favicons?domain=" + ds.url
+									} />
+								<p className="text-sm text-center line-clamp-2">
+									{ds.name}
+								</p>
+							</div>
+						</ContextMenuTrigger>
+						<ContextMenuContent className="bg-popover">
+							<ContextMenuItem className="p-0">
+								<Button variant={"destructive"} size={"sm"}>
+									Delete
+								</Button>
+							</ContextMenuItem>
+						</ContextMenuContent>
+					</ContextMenu>
 				);
 			})}
 			<Dialog>
@@ -151,6 +164,6 @@ export const DataSourceSelector = ({
 					</div>
 				</DialogContent>
 			</Dialog>
-		</div>
+		</div >
 	);
 }
