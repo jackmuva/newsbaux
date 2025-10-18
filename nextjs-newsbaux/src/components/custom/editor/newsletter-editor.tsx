@@ -90,7 +90,7 @@ export const NewsletterEditor = ({
 		const res = await createNewNewsletter(window.location.origin, cadence, name, sections,
 			newsletters?.newsletter[0].id);
 		if (res.status === 200) {
-			toast("Newsletter created");
+			toast("Newsletter published");
 		} else {
 			toast("Failed to create newsletter");
 		}
@@ -104,7 +104,7 @@ export const NewsletterEditor = ({
 	return (
 		<>
 			{sections.length > 0 && !isNewsLoading && <>
-				<div className="flex flex-col items-center relative">
+				<div className="animate-in fade-in duration-500 flex flex-col items-center relative">
 					<textarea placeholder="Your Newsletter Title"
 						value={name}
 						rows={1}
