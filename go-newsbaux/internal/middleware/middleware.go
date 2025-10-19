@@ -5,13 +5,13 @@ import (
 	"fmt"
 	"net/http"
 	"newsbaux.com/worker/internal/auth"
-	"newsbaux.com/worker/internal/utils"
+	"newsbaux.com/worker/internal/config"
 	"slices"
 )
 
 func EnableCors(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		allowedOrigins := []string{utils.GetEnv().FrontendBaseUrl}
+		allowedOrigins := []string{config.GetEnv().FrontendBaseUrl}
 
 		origin := r.Header.Get("Origin")
 		if slices.Contains(allowedOrigins, origin) {

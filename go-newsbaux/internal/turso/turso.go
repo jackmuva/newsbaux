@@ -4,7 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/tursodatabase/libsql-client-go/libsql"
-	"newsbaux.com/worker/internal/utils"
+	"newsbaux.com/worker/internal/config"
+	"newsbaux.com/worker/internal/models"
 	"os"
 	"strings"
 	"time"
@@ -12,9 +13,9 @@ import (
 
 func ConnectTurso() *sql.DB {
 	var urlBuffer strings.Builder
-	urlBuffer.WriteString(utils.GetEnv().TursoDatabaseUrl)
+	urlBuffer.WriteString(config.GetEnv().TursoDatabaseUrl)
 	urlBuffer.WriteString("?authToken=")
-	urlBuffer.WriteString(utils.GetEnv().TursoAuthToken)
+	urlBuffer.WriteString(config.GetEnv().TursoAuthToken)
 
 	db, err := sql.Open("libsql", urlBuffer.String())
 	if err != nil {
@@ -26,17 +27,7 @@ func ConnectTurso() *sql.DB {
 	return db
 }
 
-type Article struct {
-	Id            string
-	DataSourceId  string
-	Title         string
-	Contents      string
-	Url           string
-	RetrievalDate string
-	Summary       string
-}
-
-func InsertArticle(article Article, db *sql.DB) {
+func InsertArticle(article models.Article, db *sql.DB) {
 	var qBuffer strings.Builder
 	qBuffer.WriteString("INSERT INTO articles ")
 	qBuffer.WriteString("(id, dataSourceId, title, contents, url, summary) ")
@@ -47,8 +38,8 @@ func InsertArticle(article Article, db *sql.DB) {
 	}
 }
 
-func GetArticleByDataSourceIdAfterRetrievalDate(dataSourceId string, retrievalDate string, db *sql.DB) []Article {
-	var res []Article
+func GetArticleByDataSourceIdAfterRetrievalDate(dataSourceId string, retrievalDate string, db *sql.DB) []models.Article {
+	var res []models.Article
 
 	rows, err := db.Query("SELECT * FROM articles WHERE dataSourceId = ? AND retrievalDate > ?", dataSourceId, retrievalDate)
 	if err != nil {
@@ -57,7 +48,7 @@ func GetArticleByDataSourceIdAfterRetrievalDate(dataSourceId string, retrievalDa
 	defer rows.Close()
 
 	for rows.Next() {
-		var article Article
+		var article models.Article
 		if err := rows.Scan(&article.Id, &article.DataSourceId, &article.Title, &article.Contents, &article.Url, &article.RetrievalDate, &article.Summary); err != nil {
 			fmt.Printf("error scanning row: %s", err)
 		}
@@ -70,14 +61,7 @@ func GetArticleByDataSourceIdAfterRetrievalDate(dataSourceId string, retrievalDa
 	return res
 }
 
-type Edition struct {
-	Id           string
-	NewsletterId string
-	Contents     string
-	PublishDate  string
-}
-
-func InsertEdition(edition Edition, db *sql.DB) {
+func InsertEdition(edition models.Edition, db *sql.DB) {
 	var qBuffer strings.Builder
 	qBuffer.WriteString("INSERT INTO editions")
 	qBuffer.WriteString("(id, newsletterId, contents) ")
@@ -88,8 +72,8 @@ func InsertEdition(edition Edition, db *sql.DB) {
 	}
 }
 
-func GetEditionByNewsletterId(newsletterId string, db *sql.DB) []Edition {
-	var res []Edition
+func GetEditionByNewsletterId(newsletterId string, db *sql.DB) []models.Edition {
+	var res []models.Edition
 
 	rows, err := db.Query("SELECT * FROM editions WHERE newsletterId = ?", newsletterId)
 	if err != nil {
@@ -98,7 +82,7 @@ func GetEditionByNewsletterId(newsletterId string, db *sql.DB) []Edition {
 	defer rows.Close()
 
 	for rows.Next() {
-		var ed Edition
+		var ed models.Edition
 		if err := rows.Scan(&ed.Id, &ed.NewsletterId, &ed.Contents, &ed.PublishDate); err != nil {
 			fmt.Printf("error scanning row: %s", err)
 		}
@@ -111,15 +95,7 @@ func GetEditionByNewsletterId(newsletterId string, db *sql.DB) []Edition {
 	return res
 }
 
-type EditionSection struct {
-	Id            string
-	EditionId     string
-	NewsSectionId string
-	Content       string
-	PublishDate   string
-}
-
-func InsertEditionSection(editionSection EditionSection, db *sql.DB) {
+func InsertEditionSection(editionSection models.EditionSection, db *sql.DB) {
 	var qBuffer strings.Builder
 	qBuffer.WriteString("INSERT INTO editionsSection")
 	qBuffer.WriteString("(id, editionId, newsSectionId, content) ")
@@ -130,8 +106,8 @@ func InsertEditionSection(editionSection EditionSection, db *sql.DB) {
 	}
 }
 
-func GetEditionSectionByEdition(editionId string, db *sql.DB) []EditionSection {
-	var res []EditionSection
+func GetEditionSectionByEdition(editionId string, db *sql.DB) []models.EditionSection {
+	var res []models.EditionSection
 
 	rows, err := db.Query("SELECT * FROM editionsSection WHERE editionId = ?", editionId)
 	if err != nil {
@@ -140,7 +116,7 @@ func GetEditionSectionByEdition(editionId string, db *sql.DB) []EditionSection {
 	defer rows.Close()
 
 	for rows.Next() {
-		var es EditionSection
+		var es models.EditionSection
 		if err := rows.Scan(&es.Id, &es.EditionId, &es.NewsSectionId, &es.Content, &es.PublishDate); err != nil {
 			fmt.Printf("error scanning row: %s", err)
 		}
@@ -153,18 +129,8 @@ func GetEditionSectionByEdition(editionId string, db *sql.DB) []EditionSection {
 	return res
 }
 
-type Newsletter struct {
-	Id           string
-	Email        string
-	Name         string
-	Cadence      int
-	SendTime     int
-	UpdatedAt    string
-	NextSendDate string
-}
-
-func GetNewsletterByNextSendDate(nextSendDate string, db *sql.DB) []Newsletter {
-	var res []Newsletter
+func GetNewsletterByNextSendDate(nextSendDate string, db *sql.DB) []models.Newsletter {
+	var res []models.Newsletter
 
 	rows, err := db.Query("SELECT * FROM newsletters WHERE nextSendDate <= ?",
 		nextSendDate)
@@ -174,7 +140,7 @@ func GetNewsletterByNextSendDate(nextSendDate string, db *sql.DB) []Newsletter {
 	defer rows.Close()
 
 	for rows.Next() {
-		var newsletter Newsletter
+		var newsletter models.Newsletter
 		if err := rows.Scan(&newsletter.Id, &newsletter.Email, &newsletter.Name,
 			&newsletter.Cadence, &newsletter.SendTime, &newsletter.UpdatedAt, &newsletter.
 				NextSendDate); err != nil {
@@ -189,17 +155,8 @@ func GetNewsletterByNextSendDate(nextSendDate string, db *sql.DB) []Newsletter {
 	return res
 }
 
-type NewsSection struct {
-	Id           string
-	Email        string
-	NewsId       string
-	Title        string
-	SystemPrompt string
-	DataSources  string
-}
-
-func GetNewsSectionByNewsletterId(newsletterId string, db *sql.DB) []NewsSection {
-	var res []NewsSection
+func GetNewsSectionByNewsletterId(newsletterId string, db *sql.DB) []models.NewsSection {
+	var res []models.NewsSection
 
 	rows, err := db.Query("SELECT * FROM newsSection WHERE newsId = ?", newsletterId)
 	if err != nil {
@@ -208,7 +165,7 @@ func GetNewsSectionByNewsletterId(newsletterId string, db *sql.DB) []NewsSection
 	defer rows.Close()
 
 	for rows.Next() {
-		var ns NewsSection
+		var ns models.NewsSection
 		if err := rows.Scan(&ns.Id, &ns.Email, &ns.NewsId, &ns.Title, &ns.SystemPrompt,
 			&ns.DataSources); err != nil {
 			fmt.Printf("error scanning row: %s", err)

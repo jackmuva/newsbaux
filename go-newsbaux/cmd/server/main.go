@@ -4,21 +4,17 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
-	"newsbaux.com/worker/internal/cronjobs"
-	"newsbaux.com/worker/internal/middleware"
-	"newsbaux.com/worker/internal/turso"
 	"os"
 	"os/signal"
 	"syscall"
-)
 
-func healthcheck(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("got healthcheck request\n")
-	io.WriteString(w, "This is vimnotion\n")
-}
+	"newsbaux.com/worker/internal/cronjobs"
+	"newsbaux.com/worker/internal/handlers"
+	"newsbaux.com/worker/internal/middleware"
+	"newsbaux.com/worker/internal/turso"
+)
 
 func main() {
 	tursoDb := turso.ConnectTurso()
@@ -38,7 +34,7 @@ func main() {
 
 	//WEB SERVER
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", healthcheck)
+	mux.HandleFunc("/", handlers.HealthCheck)
 	corsHandler := middleware.EnableCors(mux)
 
 	webCtx := context.Background()

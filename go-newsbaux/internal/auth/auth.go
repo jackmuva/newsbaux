@@ -3,12 +3,12 @@ package auth
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
-	"newsbaux.com/worker/internal/utils"
+	"newsbaux.com/worker/internal/config"
 )
 
 func VerifyJwt(tokenString string) (*jwt.Token, error) {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (any, error) {
-		return []byte(utils.GetEnv().AuthSecret), nil
+		return []byte(config.GetEnv().AuthSecret), nil
 	})
 	if err != nil {
 		return nil, err
