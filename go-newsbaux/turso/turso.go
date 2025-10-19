@@ -47,6 +47,29 @@ func InsertArticle(article Article, db *sql.DB) {
 	}
 }
 
+func GetArticleByDataSourceIdAfterRetrievalDate(dataSourceId string, retrievalDate string, db *sql.DB) []Article {
+	var res []Article
+
+	rows, err := db.Query("SELECT * FROM articles WHERE dataSourceId = ? AND retrievalDate > ?", dataSourceId, retrievalDate)
+	if err != nil {
+		fmt.Printf("error querying data: %s", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var article Article
+		if err := rows.Scan(&article.Id, &article.DataSourceId, &article.Title, &article.Contents, &article.Url, &article.RetrievalDate, &article.Summary); err != nil {
+			fmt.Printf("error scanning row: %s", err)
+		}
+
+		res = append(res, article)
+	}
+	if err := rows.Err(); err != nil {
+		fmt.Printf("error iterating rows: %s", err)
+	}
+	return res
+}
+
 type Edition struct {
 	Id           string
 	NewsletterId string
@@ -123,6 +146,75 @@ func GetEditionSectionByEdition(editionId string, db *sql.DB) []EditionSection {
 		}
 
 		res = append(res, es)
+	}
+	if err := rows.Err(); err != nil {
+		fmt.Printf("error iterating rows: %s", err)
+	}
+	return res
+}
+
+type Newsletter struct {
+	Id           string
+	Email        string
+	Name         string
+	Cadence      int
+	SendTime     int
+	UpdatedAt    string
+	NextSendDate string
+}
+
+func GetNewsletterByNextSendDate(nextSendDate string, db *sql.DB) []Newsletter {
+	var res []Newsletter
+
+	rows, err := db.Query("SELECT * FROM newsletters WHERE nextSendDate <= ?",
+		nextSendDate)
+	if err != nil {
+		fmt.Printf("error querying data: %s", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var newsletter Newsletter
+		if err := rows.Scan(&newsletter.Id, &newsletter.Email, &newsletter.Name,
+			&newsletter.Cadence, &newsletter.SendTime, &newsletter.UpdatedAt, &newsletter.
+				NextSendDate); err != nil {
+			fmt.Printf("error scanning row: %s", err)
+		}
+
+		res = append(res, newsletter)
+	}
+	if err := rows.Err(); err != nil {
+		fmt.Printf("error iterating rows: %s", err)
+	}
+	return res
+}
+
+type NewsSection struct {
+	Id           string
+	Email        string
+	NewsId       string
+	Title        string
+	SystemPrompt string
+	DataSources  string
+}
+
+func GetNewsSectionByNewsletterId(newsletterId string, db *sql.DB) []NewsSection {
+	var res []NewsSection
+
+	rows, err := db.Query("SELECT * FROM newsSection WHERE newsId = ?", newsletterId)
+	if err != nil {
+		fmt.Printf("error querying data: %s", err)
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var ns NewsSection
+		if err := rows.Scan(&ns.Id, &ns.Email, &ns.NewsId, &ns.Title, &ns.SystemPrompt,
+			&ns.DataSources); err != nil {
+			fmt.Printf("error scanning row: %s", err)
+		}
+
+		res = append(res, ns)
 	}
 	if err := rows.Err(); err != nil {
 		fmt.Printf("error iterating rows: %s", err)

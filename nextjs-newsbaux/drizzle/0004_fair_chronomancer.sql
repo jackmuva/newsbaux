@@ -1,0 +1,1 @@
+ALTER TABLE `newsletters` ADD `nextSendDate` text;

@@ -4,6 +4,7 @@ import { Session } from 'next-auth';
 import { createNewsletter, getNewslettersByUserId, updateNewsletter } from "@/db/queries/newsletters";
 import { deleteNewsSectionByNewsletterId, getNewsSectionsByNewsletterId, upsertNewsSection } from "@/db/queries/newsSections";
 import { Newsletter, NewsSection } from "@/db/schema";
+import { addDays } from "@/lib/utils";
 
 export const NewsletterZod = z.object({
 	id: z.string().nullable(),
@@ -86,15 +87,18 @@ export async function POST(request: Request) {
 		message: "unable to get user session",
 	});
 
+
 	const body = await request.json();
 	try {
 		const nz = NewsletterZod.parse({ ...body, email: session.user.email });
 		const existing: boolean = (await getNewslettersByUserId(nz.email)).length > 0;
 		let newsletter: Newsletter | null = null;
 		if (!existing) {
-			newsletter = await createNewsletter(nz.email, nz.cadence, nz.name, nz.sendTime);
+			newsletter = await createNewsletter(nz.email, nz.cadence, nz.name, nz.sendTime,
+				addDays((new Date(new Date().setUTCHours(nz.sendTime, 0, 0, 0))), nz.cadence).toISOString().split("T")[0]);
 		} else if (nz.id) {
-			newsletter = await updateNewsletter(nz.id, nz.cadence, nz.name, nz.sendTime);
+			newsletter = await updateNewsletter(nz.id, nz.cadence, nz.name, nz.sendTime,
+				addDays((new Date(new Date().setUTCHours(nz.sendTime, 0, 0, 0))), nz.cadence).toISOString().split("T")[0]);
 		}
 		if (!newsletter) return Response.json({
 			status: 500,

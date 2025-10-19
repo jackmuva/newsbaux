@@ -15,8 +15,9 @@ export const newslettersTable = sqliteTable('newsletters', {
 	name: text('name').notNull(),
 	cadence: integer('cadence').notNull(),
 	sendTime: integer('sendTime').default(11).notNull(),
-	updatedAt: text('updatedAt').$defaultFn(() => (new Date()).toUTCString())
-		.$onUpdate(() => (new Date()).toUTCString()),
+	updatedAt: text('updatedAt').$defaultFn(() => (new Date()).toISOString())
+		.$onUpdate(() => (new Date()).toISOString()),
+	nextSendDate: text('nextSendDate'),
 });
 
 export type Newsletter = typeof newslettersTable.$inferSelect;
@@ -48,8 +49,8 @@ export const articlesTable = sqliteTable('articles', {
 	title: text('title').notNull(),
 	contents: text('contents').notNull(),
 	url: text('url').notNull(),
-	retrievalDate: text('retrievalDate').$defaultFn(() => (new Date()).toUTCString())
-		.$onUpdate(() => (new Date()).toUTCString()),
+	retrievalDate: text('retrievalDate').$defaultFn(() => (new Date()).toISOString())
+		.$onUpdate(() => (new Date()).toISOString()),
 	summary: text('summary'),
 });
 
@@ -59,8 +60,8 @@ export const editionsTable = sqliteTable('editions', {
 	id: text('id').primaryKey().$defaultFn(() => v4()),
 	newsletterId: text('newsletterId').notNull().references(() => newslettersTable.id, { onDelete: "cascade" }),
 	contents: text('contents'),
-	publishDate: text('publishDate').$defaultFn(() => (new Date()).toUTCString())
-		.$onUpdate(() => (new Date()).toUTCString()),
+	publishDate: text('publishDate').$defaultFn(() => (new Date()).toISOString())
+		.$onUpdate(() => (new Date()).toISOString()),
 });
 
 export type Edition = typeof editionsTable.$inferSelect;
@@ -70,8 +71,8 @@ export const editionSectionTable = sqliteTable('editionsSection', {
 	editionId: text('editionId').notNull().references(() => editionsTable.id, { onDelete: "cascade" }),
 	newsSectionId: text('newsSectionId').notNull().references(() => newsSectionTable.id, { onDelete: 'cascade' }),
 	contents: text('contents'),
-	publishDate: text('publishDate').$defaultFn(() => (new Date()).toUTCString())
-		.$onUpdate(() => (new Date()).toUTCString()),
+	publishDate: text('publishDate').$defaultFn(() => (new Date()).toISOString())
+		.$onUpdate(() => (new Date()).toISOString()),
 });
 
 export type EditionSection = typeof editionSectionTable.$inferSelect;

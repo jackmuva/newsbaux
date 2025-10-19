@@ -11,13 +11,14 @@ export const getNewslettersByUserId = async (email: string): Promise<Newsletter[
 	return [];
 }
 
-export const createNewsletter = async (email: string, cadence: number, name: string, sendTime: number): Promise<Newsletter | null> => {
+export const createNewsletter = async (email: string, cadence: number, name: string, sendTime: number, nextSendDate: string): Promise<Newsletter | null> => {
 	try {
 		return (await db.insert(newslettersTable).values({
 			email: email,
 			cadence: cadence,
 			name: name,
 			sendTime: sendTime,
+			nextSendDate: nextSendDate,
 		}).returning())[0];
 	} catch (e) {
 		console.error("Unable to upsert newsletter: ", e);
@@ -25,12 +26,13 @@ export const createNewsletter = async (email: string, cadence: number, name: str
 	return null;
 }
 
-export const updateNewsletter = async (id: string, cadence: number, name: string, sendTime: number): Promise<Newsletter | null> => {
+export const updateNewsletter = async (id: string, cadence: number, name: string, sendTime: number, nextSendDate: string): Promise<Newsletter | null> => {
 	try {
 		return (await db.update(newslettersTable).set({
 			cadence: cadence,
 			name: name,
 			sendTime: sendTime,
+			nextSendDate: nextSendDate,
 		}).where(eq(newslettersTable.id, id)).returning())[0];
 	} catch (e) {
 		console.error("Unable to update newsletter: ", e);
