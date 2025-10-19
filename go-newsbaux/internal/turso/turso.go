@@ -3,12 +3,14 @@ package turso
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/tursodatabase/libsql-client-go/libsql"
-	"newsbaux.com/worker/internal/config"
-	"newsbaux.com/worker/internal/models"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+	_ "github.com/tursodatabase/libsql-client-go/libsql"
+	"newsbaux.com/worker/internal/config"
+	"newsbaux.com/worker/internal/models"
 )
 
 func ConnectTurso() *sql.DB {
@@ -30,8 +32,8 @@ func ConnectTurso() *sql.DB {
 func InsertArticle(article models.Article, db *sql.DB) {
 	var qBuffer strings.Builder
 	qBuffer.WriteString("INSERT INTO articles ")
-	qBuffer.WriteString("(id, dataSourceId, title, contents, url, summary) ")
-	qBuffer.WriteString("VALUES (?, ?, ?, ?, ?, ? )")
+	qBuffer.WriteString("(dataSourceId, title, contents, url, summary) ")
+	qBuffer.WriteString("VALUES (?, ?, ?, ?, ? )")
 	_, err := db.Exec(qBuffer.String(), article.Id, article.DataSourceId, article.Title, article.Contents, article.Url, article.Summary)
 	if err != nil {
 		fmt.Printf("error inserting data: %s", err)
@@ -61,15 +63,17 @@ func GetArticleByDataSourceIdAfterRetrievalDate(dataSourceId string, retrievalDa
 	return res
 }
 
-func InsertEdition(edition models.Edition, db *sql.DB) {
+func InsertEdition(edition models.Edition, db *sql.DB) string {
+	var id string = uuid.New().String()
 	var qBuffer strings.Builder
 	qBuffer.WriteString("INSERT INTO editions")
-	qBuffer.WriteString("(id, newsletterId, contents) ")
-	qBuffer.WriteString("VALUES (?, ?, ? )")
-	_, err := db.Exec(qBuffer.String(), edition.Id, edition.NewsletterId, edition.Contents)
+	qBuffer.WriteString("(id, newsletterId, contents, publishDate) ")
+	qBuffer.WriteString("VALUES (?, ?, ?, ?)")
+	_, err := db.Exec(qBuffer.String(), id, edition.NewsletterId, edition.Contents, edition.PublishDate)
 	if err != nil {
 		fmt.Printf("error inserting data: %s", err)
 	}
+	return id
 }
 
 func GetEditionByNewsletterId(newsletterId string, db *sql.DB) []models.Edition {
@@ -98,8 +102,8 @@ func GetEditionByNewsletterId(newsletterId string, db *sql.DB) []models.Edition 
 func InsertEditionSection(editionSection models.EditionSection, db *sql.DB) {
 	var qBuffer strings.Builder
 	qBuffer.WriteString("INSERT INTO editionsSection")
-	qBuffer.WriteString("(id, editionId, newsSectionId, content) ")
-	qBuffer.WriteString("VALUES (?, ?, ?, ? )")
+	qBuffer.WriteString("(editionId, newsSectionId, content) ")
+	qBuffer.WriteString("VALUES (?, ?, ? )")
 	_, err := db.Exec(qBuffer.String(), editionSection.Id, editionSection.EditionId, editionSection.NewsSectionId, editionSection.Content)
 	if err != nil {
 		fmt.Printf("error inserting data: %s", err)
@@ -129,11 +133,11 @@ func GetEditionSectionByEdition(editionId string, db *sql.DB) []models.EditionSe
 	return res
 }
 
-func GetNewsletterByNextSendDate(nextSendDate string, db *sql.DB) []models.Newsletter {
+func GetNewsletterByNextSendDate(nextSendDate string, hour int, db *sql.DB) []models.Newsletter {
 	var res []models.Newsletter
 
-	rows, err := db.Query("SELECT * FROM newsletters WHERE nextSendDate <= ?",
-		nextSendDate)
+	rows, err := db.Query("SELECT * FROM newsletters WHERE nextSendDate <= ? AND hour <=?",
+		nextSendDate, hour)
 	if err != nil {
 		fmt.Printf("error querying data: %s", err)
 	}

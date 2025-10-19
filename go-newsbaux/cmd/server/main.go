@@ -27,7 +27,7 @@ func main() {
 	sigChannel := make(chan os.Signal, 1)
 	signal.Notify(sigChannel, os.Interrupt, syscall.SIGTERM)
 
-	jm := cronjobs.InitJobManager(ctx)
+	jm := cronjobs.InitJobManager(ctx, tursoDb)
 	jm.RegisterJob(cronjobs.HalfHourJob{})
 
 	go jm.StartScheduler()

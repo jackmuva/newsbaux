@@ -1,12 +1,16 @@
 module newsbaux.com/worker
 
-go 1.22.2
+go 1.24.0
+
+toolchain go1.24.9
 
 require (
 	github.com/golang-jwt/jwt/v5 v5.3.0
+	github.com/google/uuid v1.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/tursodatabase/libsql-client-go v0.0.0-20240902231107-85af5b9d094d
+	golang.org/x/sync v0.17.0
 )
 
 require (

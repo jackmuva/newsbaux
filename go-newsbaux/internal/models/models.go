@@ -43,3 +43,11 @@ type NewsSection struct {
 	SystemPrompt string
 	DataSources  string
 }
+
+type DataSources struct {
+	Id       string
+	Email    string
+	Url      string
+	Name     string
+	Standard int
+}
