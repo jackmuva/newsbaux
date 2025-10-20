@@ -17,7 +17,6 @@ export const handleAutosize = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 };
 
 export const addDays = (date: Date, days: number): Date => {
-	var date = new Date(date);
 	date.setDate(date.getDate() + days);
 	return date;
 }

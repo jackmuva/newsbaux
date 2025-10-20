@@ -7,7 +7,6 @@ import { useMutation } from "@tanstack/react-query";
 import { CirclePlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import Image from "next/image";
 import { Dialog, DialogClose, DialogTitle, DialogTrigger } from "@radix-ui/react-dialog";
 import { DialogContent, DialogFooter, DialogHeader } from "@/components/ui/dialog";
 import { ContextMenu, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
@@ -21,7 +20,7 @@ export const DataSourceSelector = ({
 	section: Section,
 }) => {
 	const { upsertSection } = useEditorStore((state) => state);
-	const [url, setUrl] = useState("");
+	const [url, setUrl] = useState("https://");
 	const [dsName, setDsName] = useState("");
 
 	const dsMap = section.dataSources.reduce((obj, ds) => ({ ...obj, [ds.id]: ds }), {})
@@ -152,6 +151,7 @@ export const DataSourceSelector = ({
 					<div className="flex flex-col gap-2">
 						<input type="url"
 							placeholder="https://example.com"
+							value={url}
 							pattern="https://.*"
 							className="placeholder-gray-400 w-full p-1 outline"
 							onChange={(e) => {
@@ -162,6 +162,7 @@ export const DataSourceSelector = ({
 						/>
 						<input placeholder="give your source a name"
 							className="placeholder-gray-400 w-full p-1 outline"
+							value={dsName}
 							onChange={(e) => {
 								e.preventDefault();
 								setDsName(e.target.value);

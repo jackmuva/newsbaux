@@ -162,10 +162,10 @@ export const NewsletterEditor = ({
 									e.preventDefault();
 									setSendTime(Number(e.target.value));
 								}}>
-								<option value="">at x o' clock</option>
+								<option value="">at x o&apos; clock</option>
 								{[...Array(24).keys()].map((num) => {
 									return (<option key={num} value={num + 1}>
-										at {num + 1} o' clock
+										at {num + 1} o&apos; clock
 									</option>)
 								})}
 							</select>
