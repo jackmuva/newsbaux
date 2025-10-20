@@ -11,10 +11,10 @@ export const getArticlesByDataSourceId = async (dataSourceId: string): Promise<A
 	return [];
 }
 
-export const createArticle = async (dataSourceId: string, contents: string, url: string, summary?: string): Promise<Article | null> => {
+export const createArticle = async (dataSourceId: string, title: string, contents: string, url: string, summary?: string): Promise<Article | null> => {
 	try {
 		return (await db.insert(articlesTable).values({
-			dataSourceId, contents, url, summary
+			dataSourceId, title, contents, url, summary
 		}).returning())[0];
 	} catch (e) {
 		console.error("Unable to create article: ", e);
