@@ -11,6 +11,8 @@ import (
 	"syscall"
 
 	"newsbaux.com/worker/internal/cronjobs"
+	"newsbaux.com/worker/internal/cronjobs/daily"
+	"newsbaux.com/worker/internal/cronjobs/halfhour"
 	"newsbaux.com/worker/internal/handlers"
 	"newsbaux.com/worker/internal/middleware"
 	"newsbaux.com/worker/internal/turso"
@@ -28,7 +30,8 @@ func main() {
 	signal.Notify(sigChannel, os.Interrupt, syscall.SIGTERM)
 
 	jm := cronjobs.InitJobManager(ctx, tursoDb)
-	jm.RegisterJob(cronjobs.HalfHourJob{})
+	jm.RegisterJob(halfhour.HalfHourJob{})
+	jm.RegisterJob(daily.DailyJob{})
 
 	go jm.StartScheduler()
 
