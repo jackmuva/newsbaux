@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"newsbaux.com/worker/internal/config"
 	"newsbaux.com/worker/internal/models"
 	"newsbaux.com/worker/internal/turso"
 )
@@ -119,11 +120,30 @@ func (m DailyJob) Run(ctx context.Context, db *sql.DB) error {
 	urlArray := collectDataSourceUrls(dataSourceMap)
 
 	for _, url := range urlArray {
-		// jsonBody := []byte(`{"client_message": "hello, server!"}`)
 		var jsonBody map[string]interface{}
+		jsonBody["url"] = url
 		jsonString, err := json.Marshal(jsonBody)
+		if err != nil {
+			fmt.Printf("error creating firecrawl json: %s\n", err)
+		}
 
-		req, err := http.NewRequest(http.MethodPost, "https://api.firecrawl.dev/v2/scrape", bytes.NewReader(jsonString))
+		req, err := http.NewRequest(http.MethodPost,
+			"https://api.firecrawl.dev/v2/scrape",
+			bytes.NewReader(jsonString))
+		if err != nil {
+			fmt.Printf("error sending post request to firecrawl: %s\n", err)
+		}
+
+		req.Header.Set("Content-Type", "application/json")
+		req.Header.Set("Authorization", "Bearer "+config.GetEnv().FirecrawlApiKey)
+
+		client := http.Client{
+			Timeout: 30 * time.Second,
+		}
+		res, err := client.Do(req)
+		if err != nil {
+			fmt.Printf("client: error making http request: %s\n", err)
+		}
 	}
 
 	return nil
