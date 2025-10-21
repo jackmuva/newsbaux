@@ -1,15 +1,18 @@
 package daily
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"newsbaux.com/worker/internal/models"
-	"newsbaux.com/worker/internal/turso"
+	"net/http"
 	"strings"
 	"sync"
 	"time"
+
+	"newsbaux.com/worker/internal/models"
+	"newsbaux.com/worker/internal/turso"
 )
 
 type DailyJob struct{}
@@ -116,7 +119,11 @@ func (m DailyJob) Run(ctx context.Context, db *sql.DB) error {
 	urlArray := collectDataSourceUrls(dataSourceMap)
 
 	for _, url := range urlArray {
-		fmt.Print(url)
+		// jsonBody := []byte(`{"client_message": "hello, server!"}`)
+		var jsonBody map[string]interface{}
+		jsonString, err := json.Marshal(jsonBody)
+
+		req, err := http.NewRequest(http.MethodPost, "https://api.firecrawl.dev/v2/scrape", bytes.NewReader(jsonString))
 	}
 
 	return nil
