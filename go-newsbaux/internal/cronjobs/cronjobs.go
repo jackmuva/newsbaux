@@ -4,13 +4,15 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"net/http"
+
 	"github.com/robfig/cron/v3"
 )
 
 type CronJob interface {
 	Name() string
 	Schedule() string
-	Run(ctx context.Context, db *sql.DB) error
+	Run(ctx context.Context, client *http.Client, db *sql.DB) error
 }
 
 type JobManager struct {
@@ -18,14 +20,16 @@ type JobManager struct {
 	Jobs    []CronJob
 	Context context.Context
 	Db      *sql.DB
+	Client  *http.Client
 }
 
-func InitJobManager(ctx context.Context, db *sql.DB) *JobManager {
+func InitJobManager(ctx context.Context, client *http.Client, db *sql.DB) *JobManager {
 	return &JobManager{
 		Cron:    cron.New(cron.WithSeconds()),
 		Jobs:    []CronJob{},
 		Context: ctx,
 		Db:      db,
+		Client:  client,
 	}
 }
 
@@ -37,7 +41,7 @@ func (jm *JobManager) StartScheduler() {
 	for _, job := range jm.Jobs {
 		schedule := job.Schedule()
 		if _, err := jm.Cron.AddFunc(schedule, func() {
-			if err := job.Run(jm.Context, jm.Db); err != nil {
+			if err := job.Run(jm.Context, jm.Client, jm.Db); err != nil {
 				fmt.Printf("Error in job %s, %s", job.Name(), err)
 			}
 		}); err != nil {

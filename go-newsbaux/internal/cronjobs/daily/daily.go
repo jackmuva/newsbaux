@@ -14,6 +14,7 @@ import (
 	"newsbaux.com/worker/internal/config"
 	"newsbaux.com/worker/internal/models"
 	"newsbaux.com/worker/internal/turso"
+	"newsbaux.com/worker/internal/utils"
 )
 
 type DailyJob struct{}
@@ -112,7 +113,8 @@ func processNewsletters(ctx context.Context, newsletters []models.Newsletter, da
 	return &dataSourceMap
 }
 
-func (m DailyJob) Run(ctx context.Context, db *sql.DB) error {
+func (m DailyJob) Run(ctx context.Context, client *http.Client, db *sql.DB) error {
+
 	date, hour := getCurrentDateAndHour()
 	newsletters := turso.GetNewsletterByNextSendDate(date, hour, db)
 
@@ -137,10 +139,7 @@ func (m DailyJob) Run(ctx context.Context, db *sql.DB) error {
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("Authorization", "Bearer "+config.GetEnv().FirecrawlApiKey)
 
-		client := http.Client{
-			Timeout: 30 * time.Second,
-		}
-		res, err := client.Do(req)
+		res, err := utils.MakeRequestWithRetry(client, req, 3)
 		if err != nil {
 			fmt.Printf("client: error making http request: %s\n", err)
 		}

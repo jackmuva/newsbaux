@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"newsbaux.com/worker/internal/cronjobs"
 	"newsbaux.com/worker/internal/cronjobs/daily"
@@ -29,7 +30,11 @@ func main() {
 	sigChannel := make(chan os.Signal, 1)
 	signal.Notify(sigChannel, os.Interrupt, syscall.SIGTERM)
 
-	jm := cronjobs.InitJobManager(ctx, tursoDb)
+	client := http.Client{
+		Timeout: 30 * time.Second,
+	}
+
+	jm := cronjobs.InitJobManager(ctx, &client, tursoDb)
 	jm.RegisterJob(halfhour.HalfHourJob{})
 	jm.RegisterJob(daily.DailyJob{})
 
