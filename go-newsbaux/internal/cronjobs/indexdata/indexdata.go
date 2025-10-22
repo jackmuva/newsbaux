@@ -1,4 +1,4 @@
-package daily
+package indexdata
 
 import (
 	"bytes"
@@ -17,13 +17,13 @@ import (
 	"newsbaux.com/worker/internal/utils"
 )
 
-type DailyJob struct{}
+type DailyIndexJob struct{}
 
-func (m DailyJob) Name() string {
-	return "DailyJob"
+func (m DailyIndexJob) Name() string {
+	return "DailyIndexJob"
 }
 
-func (m DailyJob) Schedule() string {
+func (m DailyIndexJob) Schedule() string {
 	return "0 0 9 * * *"
 }
 
@@ -113,7 +113,7 @@ func processNewsletters(ctx context.Context, newsletters []models.Newsletter, da
 	return &dataSourceMap
 }
 
-func (m DailyJob) Run(ctx context.Context, client *http.Client, db *sql.DB) error {
+func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB) error {
 
 	date, hour := getCurrentDateAndHour()
 	newsletters := turso.GetNewsletterByNextSendDate(date, hour, db)
@@ -124,6 +124,9 @@ func (m DailyJob) Run(ctx context.Context, client *http.Client, db *sql.DB) erro
 	for _, url := range urlArray {
 		var jsonBody map[string]interface{}
 		jsonBody["url"] = url
+		jsonBody["formats"] = [1]string{"markdown"}
+		jsonBody["onlyMainContent"] = true
+
 		jsonString, err := json.Marshal(jsonBody)
 		if err != nil {
 			fmt.Printf("error creating firecrawl json: %s\n", err)

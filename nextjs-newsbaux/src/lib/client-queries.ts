@@ -19,6 +19,7 @@ export const addNewDataSource = async (origin: string, url: string, dsName: stri
 	const req = await fetch(`${origin}/api/data-sources`, {
 		method: "POST",
 		body: JSON.stringify({
+			id: null,
 			url: url,
 			name: dsName,
 			standard: false,

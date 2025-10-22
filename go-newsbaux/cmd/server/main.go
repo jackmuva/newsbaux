@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"newsbaux.com/worker/internal/cronjobs"
-	"newsbaux.com/worker/internal/cronjobs/daily"
-	"newsbaux.com/worker/internal/cronjobs/halfhour"
+	"newsbaux.com/worker/internal/cronjobs/indexdata"
+	"newsbaux.com/worker/internal/cronjobs/newedition"
 	"newsbaux.com/worker/internal/handlers"
 	"newsbaux.com/worker/internal/middleware"
 	"newsbaux.com/worker/internal/turso"
@@ -35,8 +35,8 @@ func main() {
 	}
 
 	jm := cronjobs.InitJobManager(ctx, &client, tursoDb)
-	jm.RegisterJob(halfhour.HalfHourJob{})
-	jm.RegisterJob(daily.DailyJob{})
+	jm.RegisterJob(newedition.HalfHourNewEditionJob{})
+	jm.RegisterJob(indexdata.DailyIndexJob{})
 
 	go jm.StartScheduler()
 
