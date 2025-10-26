@@ -6,15 +6,15 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
-	"strings"
-	"sync"
-	"time"
-
 	"newsbaux.com/worker/internal/config"
 	"newsbaux.com/worker/internal/models"
 	"newsbaux.com/worker/internal/turso"
 	"newsbaux.com/worker/internal/utils"
+	"strings"
+	"sync"
+	"time"
 )
 
 type DailyIndexJob struct{}
@@ -24,7 +24,8 @@ func (m DailyIndexJob) Name() string {
 }
 
 func (m DailyIndexJob) Schedule() string {
-	return "0 0 9 * * *"
+	// return "0 0 9 * * *"
+	return "*/30 * * * * *"
 }
 
 func getCurrentDateAndHour() (string, int) {
@@ -36,7 +37,6 @@ func getCurrentDateAndHour() (string, int) {
 func collectDataSourceUrls(dataSourceMap *sync.Map) []string {
 	var urlArray []string
 	dataSourceMap.Range(func(key any, value any) bool {
-		fmt.Printf("key: %s, val: %s\n", key, value)
 		urlArray = append(urlArray, key.(string))
 		return true
 	})
@@ -106,6 +106,7 @@ func processNewsletters(ctx context.Context, newsletters []models.Newsletter, da
 
 			sections := turso.GetNewsSectionByNewsletterId(newsletter.Id, db)
 			processSections(ctx, sections, date, db, &dataSourceMap)
+			fmt.Printf("sections: %v\n", sections)
 		}(newsletter)
 	}
 
@@ -116,15 +117,19 @@ func processNewsletters(ctx context.Context, newsletters []models.Newsletter, da
 func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB) error {
 
 	date, hour := getCurrentDateAndHour()
+	fmt.Printf("current date: %s\ncurrent time: %d\n", date, hour)
 	newsletters := turso.GetNewsletterByNextSendDate(date, hour, db)
+	fmt.Printf("newsletters due: %v\n", newsletters)
 
 	dataSourceMap := processNewsletters(ctx, newsletters, date, db)
 	urlArray := collectDataSourceUrls(dataSourceMap)
 
+	fmt.Printf("url array: %v\n", urlArray)
+
 	for _, url := range urlArray {
-		var jsonBody map[string]interface{}
+		jsonBody := make(map[string]any)
 		jsonBody["url"] = url
-		jsonBody["formats"] = [1]string{"markdown"}
+		jsonBody["formats"] = [2]string{"markdown", "links"}
 		jsonBody["onlyMainContent"] = true
 
 		jsonString, err := json.Marshal(jsonBody)
@@ -144,7 +149,17 @@ func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB)
 
 		res, err := utils.MakeRequestWithRetry(client, req, 3)
 		if err != nil {
-			fmt.Printf("client: error making http request: %s\n", err)
+			fmt.Printf("error making http request: %s\n", err)
+		}
+		reqBody, err := io.ReadAll(res.Body)
+		if err != nil {
+			fmt.Printf("could not read request body: %s\n", err)
+		}
+		fmt.Printf("raw firecrawl body: %s\n", string(reqBody[:]))
+		var body any
+		err = json.Unmarshal(reqBody, &body)
+		if err != nil {
+			fmt.Printf("cannot unmarshal: %s\n", err)
 		}
 	}
 

@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Article struct {
 	Id            string
 	DataSourceId  string
@@ -31,7 +33,7 @@ type Newsletter struct {
 	Name         string
 	Cadence      int
 	SendTime     int
-	UpdatedAt    string
+	UpdatedAt    time.Time
 	NextSendDate string
 }
 
