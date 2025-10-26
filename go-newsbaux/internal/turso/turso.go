@@ -145,10 +145,9 @@ func GetNewsletterByNextSendDate(nextSendDate string, hour int, db *sql.DB) []mo
 
 	for rows.Next() {
 		var newsletter models.Newsletter
-		if err := rows.Scan(&newsletter.Id, &newsletter.Email, &newsletter.Name,
-			&newsletter.Cadence, &newsletter.SendTime, &newsletter.UpdatedAt, &newsletter.
-				NextSendDate); err != nil {
-			fmt.Printf("error scanning row: %s", err)
+		if err := rows.Scan(&newsletter.Id, &newsletter.Email
+			&newsletter.Cadence,  &newsletter.UpdatedAt, &newsletter.Name, &newsletter.SendTime, &newsletter.NextSendDate); err != nil {
+			fmt.Printf("error scanning row: %s\n", err)
 		}
 
 		res = append(res, newsletter)

@@ -114,6 +114,17 @@ func processNewsletters(ctx context.Context, newsletters []models.Newsletter, da
 	return &dataSourceMap
 }
 
+type FirecrawlLinks struct {
+	Url         string `json:"url"`
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}
+
+type FirecrawlMapResponse struct {
+	Success bool             `json:"success"`
+	Links   []FirecrawlLinks `json:"links"`
+}
+
 func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB) error {
 
 	date, hour := getCurrentDateAndHour()
@@ -129,8 +140,7 @@ func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB)
 	for _, url := range urlArray {
 		jsonBody := make(map[string]any)
 		jsonBody["url"] = url
-		jsonBody["formats"] = [2]string{"markdown", "links"}
-		jsonBody["onlyMainContent"] = true
+		jsonBody["sitemap"] = "skip"
 
 		jsonString, err := json.Marshal(jsonBody)
 		if err != nil {
@@ -138,7 +148,7 @@ func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB)
 		}
 
 		req, err := http.NewRequest(http.MethodPost,
-			"https://api.firecrawl.dev/v2/scrape",
+			"https://api.firecrawl.dev/v2/map",
 			bytes.NewReader(jsonString))
 		if err != nil {
 			fmt.Printf("error sending post request to firecrawl: %s\n", err)
@@ -155,12 +165,14 @@ func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB)
 		if err != nil {
 			fmt.Printf("could not read request body: %s\n", err)
 		}
-		fmt.Printf("raw firecrawl body: %s\n", string(reqBody[:]))
-		var body any
+		// fmt.Printf("raw firecrawl body: %s\n", string(reqBody[:]))
+
+		var body FirecrawlMapResponse
 		err = json.Unmarshal(reqBody, &body)
 		if err != nil {
 			fmt.Printf("cannot unmarshal: %s\n", err)
 		}
+		fmt.Printf("marshalled response: %v\n", body)
 	}
 
 	return nil

@@ -33,7 +33,7 @@ type Newsletter struct {
 	Name         string
 	Cadence      int
 	SendTime     int
-	UpdatedAt    time.Time
+	UpdatedAt    *time.Time
 	NextSendDate string
 }
 
