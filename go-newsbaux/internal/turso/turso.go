@@ -34,7 +34,7 @@ func InsertArticle(article models.Article, db *sql.DB) {
 	qBuffer.WriteString("INSERT INTO articles ")
 	qBuffer.WriteString("(dataSourceId, title, contents, url, summary) ")
 	qBuffer.WriteString("VALUES (?, ?, ?, ?, ? )")
-	_, err := db.Exec(qBuffer.String(), article.Id, article.DataSourceId, article.Title, article.Contents, article.Url, article.Summary)
+	_, err := db.Exec(qBuffer.String(), article.DataSourceId, article.Title, article.Contents, article.Url, article.Summary)
 	if err != nil {
 		fmt.Printf("error inserting data: %s", err)
 	}
@@ -145,8 +145,8 @@ func GetNewsletterByNextSendDate(nextSendDate string, hour int, db *sql.DB) []mo
 
 	for rows.Next() {
 		var newsletter models.Newsletter
-		if err := rows.Scan(&newsletter.Id, &newsletter.Email
-			&newsletter.Cadence,  &newsletter.UpdatedAt, &newsletter.Name, &newsletter.SendTime, &newsletter.NextSendDate); err != nil {
+		if err := rows.Scan(&newsletter.Id, &newsletter.Email,
+			&newsletter.Cadence, &newsletter.UpdatedAt, &newsletter.Name, &newsletter.SendTime, &newsletter.NextSendDate); err != nil {
 			fmt.Printf("error scanning row: %s\n", err)
 		}
 

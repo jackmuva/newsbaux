@@ -1,0 +1,1 @@
+ALTER TABLE `articles` ALTER COLUMN "contents" TO "contents" text;

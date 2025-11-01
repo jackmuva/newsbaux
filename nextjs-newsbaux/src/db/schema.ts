@@ -47,7 +47,7 @@ export const articlesTable = sqliteTable('articles', {
 	id: text('id').primaryKey().$defaultFn(() => v4()),
 	dataSourceId: text('dataSourceId').notNull().references(() => dataSourcesTable.id, { onDelete: 'cascade' }),
 	title: text('title').notNull(),
-	contents: text('contents').notNull(),
+	contents: text('contents'),
 	url: text('url').notNull(),
 	retrievalDate: text('retrievalDate').$defaultFn(() => (new Date()).toISOString())
 		.$onUpdate(() => (new Date()).toISOString()),
