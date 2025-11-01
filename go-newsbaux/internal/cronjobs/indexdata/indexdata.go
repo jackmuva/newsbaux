@@ -207,7 +207,7 @@ func IndexLinks(dataSourceId string, links []FirecrawlLinks, db *sql.DB, ctx con
 					Title:         link.Title,
 					Contents:      "",
 					Url:           link.Url,
-					RetrievalDate: "",
+					RetrievalDate: time.Now().UTC().Format(time.RFC3339),
 					Summary:       "",
 				}, db)
 			}
