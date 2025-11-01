@@ -26,12 +26,11 @@ func (m DailyIndexJob) Name() string {
 }
 
 func (m DailyIndexJob) Schedule() string {
-	// return "0 0 9 * * *"
-	return "*/30 * * * * *"
+	return "0 0 9 * * *"
 }
 
-func getCurrentDateAndHour() (string, int) {
-	date := strings.Split(time.Now().UTC().Format(time.RFC3339), "T")[0]
+func getNextDayAndHour() (string, int) {
+	date := strings.Split(time.Now().Add(time.Hour*24).UTC().Format(time.RFC3339), "T")[0]
 	hour := time.Now().UTC().Hour()
 	return date, hour
 }
@@ -217,9 +216,7 @@ func IndexLinks(dataSourceId string, links []FirecrawlLinks, db *sql.DB, ctx con
 }
 
 func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB) error {
-
-	date, hour := getCurrentDateAndHour()
-	fmt.Printf("current date: %s\ncurrent time: %d\n", date, hour)
+	date, hour := getNextDayAndHour()
 	newsletters := turso.GetNewsletterByNextSendDate(date, hour, db)
 	fmt.Printf("newsletters due: %v\n", newsletters)
 
