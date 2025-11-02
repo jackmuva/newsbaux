@@ -29,13 +29,13 @@ func (m DailyIndexJob) Schedule() string {
 	return "0 0 9 * * *"
 }
 
-func getNextDayAndHour() (string, int) {
+func GetNextDayAndHour() (string, int) {
 	date := strings.Split(time.Now().Add(time.Hour*24).UTC().Format(time.RFC3339), "T")[0]
 	hour := time.Now().UTC().Hour()
 	return date, hour
 }
 
-func processDataSources(ctx context.Context, dataSources []models.DataSources, date string, db *sql.DB, dataSourceMap *sync.Map) {
+func ProcessDataSources(ctx context.Context, dataSources []models.DataSources, date string, db *sql.DB, dataSourceMap *sync.Map) {
 	const maxDataSourceWorkers = 5
 	dsSem := make(chan struct{}, maxDataSourceWorkers)
 	var dsWg sync.WaitGroup
@@ -61,7 +61,7 @@ func processDataSources(ctx context.Context, dataSources []models.DataSources, d
 	dsWg.Wait()
 }
 
-func processSections(ctx context.Context, sections []models.NewsSection, date string, db *sql.DB, dataSourceMap *sync.Map) {
+func ProcessSections(ctx context.Context, sections []models.NewsSection, date string, db *sql.DB, dataSourceMap *sync.Map) {
 	const maxSectionWorkers = 5
 	var sectionWg sync.WaitGroup
 	sectionSem := make(chan struct{}, maxSectionWorkers)
@@ -76,13 +76,13 @@ func processSections(ctx context.Context, sections []models.NewsSection, date st
 			var dataSources []models.DataSources
 			json.Unmarshal([]byte(section.DataSources), &dataSources)
 
-			processDataSources(ctx, dataSources, date, db, dataSourceMap)
+			ProcessDataSources(ctx, dataSources, date, db, dataSourceMap)
 		}(section, db)
 	}
 	sectionWg.Wait()
 }
 
-func processNewsletters(ctx context.Context, newsletters []models.Newsletter, date string, db *sql.DB) *sync.Map {
+func ProcessNewsletters(ctx context.Context, newsletters []models.Newsletter, date string, db *sql.DB) *sync.Map {
 	const maxNewsletterWorkers = 5
 	var newsWg sync.WaitGroup
 	newsletterSem := make(chan struct{}, maxNewsletterWorkers)
@@ -97,8 +97,7 @@ func processNewsletters(ctx context.Context, newsletters []models.Newsletter, da
 			defer func() { <-newsletterSem }()
 
 			sections := turso.GetNewsSectionByNewsletterId(newsletter.Id, db)
-			processSections(ctx, sections, date, db, &dataSourceMap)
-			fmt.Printf("sections: %v\n", sections)
+			ProcessSections(ctx, sections, date, db, &dataSourceMap)
 		}(newsletter)
 	}
 
@@ -216,11 +215,10 @@ func IndexLinks(dataSourceId string, links []FirecrawlLinks, db *sql.DB, ctx con
 }
 
 func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB) error {
-	date, hour := getNextDayAndHour()
+	date, hour := GetNextDayAndHour()
 	newsletters := turso.GetNewsletterByNextSendDate(date, hour, db)
-	fmt.Printf("newsletters due: %v\n", newsletters)
 
-	dataSourceMap := processNewsletters(ctx, newsletters, date, db)
+	dataSourceMap := ProcessNewsletters(ctx, newsletters, date, db)
 
 	firecrawlResponses := CollectFirecrawlReponses(dataSourceMap, client)
 	IndexArticles(firecrawlResponses, db, ctx)
