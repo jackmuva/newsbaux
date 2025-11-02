@@ -6,39 +6,52 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"time"
-
 	"newsbaux.com/worker/internal/config"
 	"newsbaux.com/worker/internal/utils"
+	"time"
 )
 
-type OpenAiResponsesData struct {
+type OpenAiInput struct {
+	Role    string
+	Content string
+}
+
+type SchemaItems struct {
+	Type string
+}
+
+type SchemaProperty struct {
+	Type  string
+	Items SchemaItems
+}
+
+type TitleSchemaProperties struct {
+	Titles SchemaProperty
+}
+
+type TitleJsonSchema struct {
+	Type                 string
+	Properties           TitleSchemaProperties
+	AdditionalProperties bool
+	Required             []string
+}
+
+type TitleTextFormat struct {
+	Type        string
+	Name        string
+	Description string
+	Strict      bool
+	Schema      TitleJsonSchema
+}
+
+type TitleTextConfig struct {
+	Format TitleTextFormat
+}
+
+type OpenAiResponsesDataTitle struct {
 	Model  string
-	Inputs []struct {
-		Role    string
-		Content string
-	}
-	Text struct {
-		Format struct {
-			Type        string
-			Name        string
-			Description string
-			Strict      bool
-			Schema      struct {
-				Type       string
-				Properties struct {
-					Titles struct {
-						Type  string
-						Items struct {
-							Type string
-						}
-					}
-				}
-				AdditionalProperties bool
-				Required             []string
-			}
-		}
-	}
+	Inputs []OpenAiInput
+	Text   TitleTextConfig
 }
 
 type OpenAiService struct {
@@ -52,12 +65,45 @@ func InitOpenAiService(client *http.Client) *OpenAiService {
 }
 
 func (oaService *OpenAiService) AiChooseArticles(sysPrompt string, titles []string) []string {
-	var inputData OpenAiResponsesData
-	inputData.Model = "gpt-5-nano"
+	inputData := OpenAiResponsesDataTitle{
+		Model: "gpt-4-turbo",
+		Inputs: []OpenAiInput{
+			{
+				Role:    "system",
+				Content: sysPrompt,
+			},
+			{
+				Role:    "user",
+				Content: fmt.Sprintf("Select the most relevant articles from: %v", titles),
+			},
+		},
+		Text: TitleTextConfig{
+			Format: TitleTextFormat{
+				Type:        "json_schema",
+				Name:        "article_selection",
+				Description: "Selected article titles",
+				Strict:      true,
+				Schema: TitleJsonSchema{
+					Type: "object",
+					Properties: TitleSchemaProperties{
+						Titles: SchemaProperty{
+							Type: "array",
+							Items: SchemaItems{
+								Type: "string",
+							},
+						},
+					},
+					AdditionalProperties: false,
+					Required:             []string{"titles"},
+				},
+			},
+		},
+	}
 
 	jsonString, err := json.Marshal(inputData)
 	if err != nil {
-		fmt.Printf("error creating firecrawl json: %s\n", err)
+		fmt.Printf("error creating openai json: %s\n", err)
+		return nil
 	}
 
 	req, err := http.NewRequest(http.MethodPost,
@@ -65,6 +111,7 @@ func (oaService *OpenAiService) AiChooseArticles(sysPrompt string, titles []stri
 		bytes.NewReader(jsonString))
 	if err != nil {
 		fmt.Printf("error sending post request to openai: %s\n", err)
+		return nil
 	}
 
 	req.Header.Set("Content-Type", "application/json")
@@ -73,17 +120,25 @@ func (oaService *OpenAiService) AiChooseArticles(sysPrompt string, titles []stri
 	res, err := utils.MakeRequestWithRetry(oaService.Client, req, 3)
 	if err != nil {
 		fmt.Printf("error making http request: %s\n", err)
+		return nil
 	}
+
 	reqBody, err := io.ReadAll(res.Body)
 	if err != nil {
 		fmt.Printf("could not read request body: %s\n", err)
+		return nil
 	}
 
-	// var body FirecrawlMapResponse
+	// TODO: Unmarshal response body and extract selected titles
+	// var body OpenAiChatCompletionResponse
 	// err = json.Unmarshal(reqBody, &body)
 	// if err != nil {
-	// 	fmt.Printf("cannot unmarshal: %s\n", err)
+	// 	fmt.Printf("cannot unmarshal openai response: %s\n", err)
+	// 	return nil
 	// }
+
+	_ = reqBody // Use the variable to avoid unused error
 	time.Sleep(time.Second * 8)
 
+	return []string{} // Placeholder return
 }
