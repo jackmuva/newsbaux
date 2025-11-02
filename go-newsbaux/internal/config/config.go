@@ -13,6 +13,7 @@ type EnvVars struct {
 	TursoDatabaseUrl string
 	TursoAuthToken   string
 	FirecrawlApiKey  string
+	OpenAiApiKey     string
 }
 
 var envVars *EnvVars
@@ -31,6 +32,7 @@ func GetEnv() *EnvVars {
 			TursoDatabaseUrl: os.Getenv("TURSO_URL"),
 			TursoAuthToken:   os.Getenv("TURSO_TOKEN"),
 			FirecrawlApiKey:  os.Getenv("FIRECRAWL_API_KEY"),
+			OpenAiApiKey:     os.Getenv("OPENAI_API_KEY"),
 		}
 	})
 	return envVars

@@ -44,7 +44,7 @@ func InsertArticle(article models.Article, db *sql.DB) {
 func GetArticleByDataSourceIdAfterRetrievalDate(dataSourceId string, retrievalDate string, db *sql.DB) []models.Article {
 	var res []models.Article
 
-	rows, err := db.Query("SELECT * FROM articles WHERE dataSourceId = ? AND retrievalDate > ?", dataSourceId, retrievalDate)
+	rows, err := db.Query("SELECT * FROM articles WHERE dataSourceId = ? AND retrievalDate >= ?", dataSourceId, retrievalDate)
 	if err != nil {
 		fmt.Printf("error querying data: %s", err)
 	}
