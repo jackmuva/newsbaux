@@ -137,8 +137,8 @@ func GetEditionSectionByEdition(editionId string, db *sql.DB) []models.EditionSe
 func GetNewsletterByNextSendDate(nextSendDate string, hour int, db *sql.DB) []models.Newsletter {
 	var res []models.Newsletter
 
-	rows, err := db.Query("SELECT * FROM newsletters WHERE nextSendDate <= ? AND sendTime<=?",
-		nextSendDate, hour)
+	rows, err := db.Query("SELECT * FROM newsletters WHERE (nextSendDate = ? AND sendTime<=?) OR (nextSendDate < ?)",
+		nextSendDate, hour, nextSendDate)
 	if err != nil {
 		fmt.Printf("error querying data: %s", err)
 	}
