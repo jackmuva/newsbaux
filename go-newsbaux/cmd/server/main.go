@@ -6,16 +6,18 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"newsbaux.com/worker/internal/cronjobs"
 	"newsbaux.com/worker/internal/cronjobs/indexdata"
 	"newsbaux.com/worker/internal/cronjobs/newedition"
 	"newsbaux.com/worker/internal/handlers"
 	"newsbaux.com/worker/internal/middleware"
 	"newsbaux.com/worker/internal/turso"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
+	"newsbaux.com/worker/internal/utils/openai"
 )
 
 func main() {
@@ -33,7 +35,9 @@ func main() {
 		Timeout: 30 * time.Second,
 	}
 
-	jm := cronjobs.InitJobManager(ctx, &client, tursoDb)
+	oaService := openai.InitOpenAiService(&client)
+
+	jm := cronjobs.InitJobManager(ctx, &client, tursoDb, oaService)
 	jm.RegisterJob(newedition.HalfHourNewEditionJob{})
 	jm.RegisterJob(indexdata.DailyIndexJob{})
 

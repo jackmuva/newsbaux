@@ -43,6 +43,13 @@
       "when": 1762020330110,
       "tag": "0005_hot_vanisher",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1762464982732,
+      "tag": "0006_nifty_star_brand",
+      "breakpoints": true
     }
   ]
 }

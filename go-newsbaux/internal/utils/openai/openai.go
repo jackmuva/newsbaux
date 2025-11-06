@@ -6,53 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
 	"newsbaux.com/worker/internal/config"
+	"newsbaux.com/worker/internal/models/openaimodels"
 	"newsbaux.com/worker/internal/utils"
-	"time"
 )
-
-type OpenAiInput struct {
-	Role    string
-	Content string
-}
-
-type SchemaItems struct {
-	Type string
-}
-
-type SchemaProperty struct {
-	Type  string
-	Items SchemaItems
-}
-
-type TitleSchemaProperties struct {
-	Titles SchemaProperty
-}
-
-type TitleJsonSchema struct {
-	Type                 string
-	Properties           TitleSchemaProperties
-	AdditionalProperties bool
-	Required             []string
-}
-
-type TitleTextFormat struct {
-	Type        string
-	Name        string
-	Description string
-	Strict      bool
-	Schema      TitleJsonSchema
-}
-
-type TitleTextConfig struct {
-	Format TitleTextFormat
-}
-
-type OpenAiResponsesDataTitle struct {
-	Model  string
-	Inputs []OpenAiInput
-	Text   TitleTextConfig
-}
 
 type OpenAiService struct {
 	Client *http.Client
@@ -65,9 +23,9 @@ func InitOpenAiService(client *http.Client) *OpenAiService {
 }
 
 func (oaService *OpenAiService) AiChooseArticles(sysPrompt string, titles []string) []string {
-	inputData := OpenAiResponsesDataTitle{
-		Model: "gpt-4-turbo",
-		Inputs: []OpenAiInput{
+	inputData := openaimodels.OpenAiResponsesDataTitle{
+		Model: "gpt-5-mini",
+		Inputs: []openaimodels.OpenAiInput{
 			{
 				Role:    "system",
 				Content: sysPrompt,
@@ -77,18 +35,18 @@ func (oaService *OpenAiService) AiChooseArticles(sysPrompt string, titles []stri
 				Content: fmt.Sprintf("Select the most relevant articles from: %v", titles),
 			},
 		},
-		Text: TitleTextConfig{
-			Format: TitleTextFormat{
+		Text: openaimodels.TitleTextConfig{
+			Format: openaimodels.TitleTextFormat{
 				Type:        "json_schema",
 				Name:        "article_selection",
 				Description: "Selected article titles",
 				Strict:      true,
-				Schema: TitleJsonSchema{
+				Schema: openaimodels.TitleJsonSchema{
 					Type: "object",
-					Properties: TitleSchemaProperties{
-						Titles: SchemaProperty{
+					Properties: openaimodels.TitleSchemaProperties{
+						Titles: openaimodels.SchemaProperty{
 							Type: "array",
-							Items: SchemaItems{
+							Items: openaimodels.SchemaItems{
 								Type: "string",
 							},
 						},
@@ -130,15 +88,14 @@ func (oaService *OpenAiService) AiChooseArticles(sysPrompt string, titles []stri
 	}
 
 	// TODO: Unmarshal response body and extract selected titles
-	// var body OpenAiChatCompletionResponse
-	// err = json.Unmarshal(reqBody, &body)
-	// if err != nil {
-	// 	fmt.Printf("cannot unmarshal openai response: %s\n", err)
-	// 	return nil
-	// }
+	var body openaimodels.OpenAiChatCompletionResponseTitles
+	err = json.Unmarshal(reqBody, &body)
+	if err != nil {
+		fmt.Printf("cannot unmarshal openai response: %s\n", err)
+		return nil
+	}
 
 	_ = reqBody // Use the variable to avoid unused error
-	time.Sleep(time.Second * 8)
 
-	return []string{} // Placeholder return
+	return nil
 }

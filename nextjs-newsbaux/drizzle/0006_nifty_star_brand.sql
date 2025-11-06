@@ -1,0 +1,1 @@
+ALTER TABLE `editionsSection` ADD `dataSources` text;

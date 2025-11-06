@@ -73,6 +73,7 @@ export const editionSectionTable = sqliteTable('editionsSection', {
 	contents: text('contents'),
 	publishDate: text('publishDate').$defaultFn(() => (new Date()).toISOString())
 		.$onUpdate(() => (new Date()).toISOString()),
+	dataSources: text("dataSources", { mode: "json" }).$type<DataSource[]>(),
 });
 
 export type EditionSection = typeof editionSectionTable.$inferSelect;

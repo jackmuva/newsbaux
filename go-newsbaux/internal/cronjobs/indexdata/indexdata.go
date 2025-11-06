@@ -17,6 +17,7 @@ import (
 	"newsbaux.com/worker/internal/models"
 	"newsbaux.com/worker/internal/turso"
 	"newsbaux.com/worker/internal/utils"
+	"newsbaux.com/worker/internal/utils/openai"
 )
 
 type DailyIndexJob struct{}
@@ -214,7 +215,7 @@ func IndexLinks(dataSourceId string, links []FirecrawlLinks, db *sql.DB, ctx con
 	linkWg.Wait()
 }
 
-func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB) error {
+func (m DailyIndexJob) Run(ctx context.Context, client *http.Client, db *sql.DB, oaService *openai.OpenAiService) error {
 	date, hour := GetNextDayAndHour()
 	newsletters := turso.GetNewsletterByNextSendDate(date, hour, db)
 
