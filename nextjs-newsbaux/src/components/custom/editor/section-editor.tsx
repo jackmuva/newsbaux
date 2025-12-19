@@ -65,7 +65,7 @@ export const SectionEditor = ({
 					onChange={handleSystemPromptChange}
 					onKeyDown={handleAutosize}
 					rows={4}
-					placeholder={`what do you want to see from this section?
+					placeholder={`What should Newsbaux's news reporter agent look for?
 (i.e. News relevant for a senior level backend engineer. Interested in system design and local-first web apps.)`}
 					className="w-full text-lg outline-none resize-none text-wrap 
 					overflow-hidden">

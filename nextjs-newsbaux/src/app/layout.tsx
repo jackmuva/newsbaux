@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Libre_Baskerville } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import { TabNav } from "@/components/custom/tab-nav";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -33,6 +34,7 @@ export default function RootLayout({
 		<html lang="en">
 			<body className={`${geistSans.variable} ${geistMono.variable} ${libreBask.variable} antialiased
 				w-dvw h-dvh bg-transparent border-r border-b-8 border-foreground/50 font-libre`}>
+				<TabNav />
 				<Providers>
 					{children}
 				</Providers>

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-SESSION="VIMNOTION-SESSION"
+SESSION="NEWSBAUX-SESSION"
 SESSIONEXISTS=$(tmux list-sessions | grep $SESSION)
 
 if [ "$SESSIONEXISTS" = "" ]
@@ -17,9 +17,6 @@ then
 
     tmux new-window -t $SESSION:2 -n 'go-server'
     tmux send-keys -t 'go-server' 'cd go-newsbaux' C-m
-
-    tmux new-window -t $SESSION:3 -n 'opencode'
-    tmux send-keys -t 'opencode' 'opencode' C-m
 fi
 
 tmux attach-session -t $SESSION:0
